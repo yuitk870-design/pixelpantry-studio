@@ -2,9 +2,6 @@
 <html lang="ko">
 <head>
 <meta charset="UTF-8">
-<!-- This site is hosted on Netlify. Anyone can build and deploy a site
-     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=4f32b6e1-0fed-40d0-b6b4-5a1589e89b2c
-     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <title>LootDrop — 스팀 게임 할인 정보</title>
 <meta name="description" content="스팀 게임 할인을 원화로 한눈에. 오늘의 특가, 가격 변동 그래프, 목표가 위시리스트까지.">
@@ -13,6 +10,10 @@
 <meta name="robots" content="index, follow">
 <meta name="keywords" content="스팀 할인, 스팀 세일, 게임 할인, Steam sale, 스팀 최저가, 게임 특가">
 <meta name="theme-color" content="#0A0A0F">
+<link rel="manifest" href="/manifest.webmanifest">
+<link rel="apple-touch-icon" href="/icon-192.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="LootDrop">
 <meta property="og:type" content="website">
 <meta property="og:title" content="LootDrop — 스팀 게임 할인 정보">
 <meta property="og:description" content="스팀 게임 할인을 원화로 한눈에. 오늘의 특가, 가격 변동 그래프, 목표가 위시리스트까지.">
@@ -237,6 +238,10 @@ svg.i{width:20px;height:20px;flex-shrink:0;}
 .page-head p svg{width:14px;height:14px;color:var(--pink);}
 .stats{display:grid;grid-template-columns:1fr 1fr;margin-top:16px;background:#0D1430;border:1px solid #1B2550;border-radius:18px;}
 .stats div{padding:16px;text-align:center;}
+.alert-card{margin-top:12px;background:linear-gradient(135deg,rgba(255,45,135,.16),rgba(41,121,255,.16));border:1px solid #2a2f55;border-radius:18px;padding:14px 16px;display:flex;align-items:center;gap:12px;}
+.alert-card .tx{flex:1;min-width:0;}.alert-card b{display:block;font-size:15px;}.alert-card small{color:var(--text-dim);font-size:12.5px;line-height:1.45;display:block;margin-top:2px;}
+.alert-card button{border:0;border-radius:999px;padding:10px 14px;font-weight:800;font-size:13px;cursor:pointer;background:var(--pink);color:#fff;white-space:nowrap;}
+.alert-card button.off{background:var(--surface-2);color:var(--text);border:1px solid var(--border);}
 .stats div+div{border-left:1px solid #1B2550;}
 .stats small{display:block;font-size:11px;color:#C9D3FF;font-weight:600;}
 .stats b{display:block;font-size:20px;margin-top:6px;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
@@ -518,6 +523,10 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
       <div><small>예상 절약 금액</small><b id="statSave">-</b></div>
       <div><small>진행 중인 할인</small><b class="y" id="statActive">0</b></div>
     </div>
+    <div class="alert-card" id="alertCard">
+      <div class="tx"><b id="alertTitle">🔔 목표가 알림 받기</b><small id="alertDesc">목표가를 걸어둔 게임이 그 가격 이하로 떨어지면 휴대폰으로 알려드려요.</small></div>
+      <button id="alertBtn">알림 켜기</button>
+    </div>
     <div class="wish-grid" id="wishGrid"></div>
   </section>
 
@@ -625,6 +634,7 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
   }
   function save(key, val){
     try { localStorage.setItem("lootdrop:" + key, JSON.stringify(val)); } catch(e){}
+    if(key === "wish" && window.__ldAlertsSync) window.__ldAlertsSync();
   }
 
   /* ================= state ================= */
@@ -1370,6 +1380,65 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
   /* ================= modals / install ================= */
   function openModal(id){ var m = $(id); m.classList.add("open"); m.setAttribute("aria-hidden", "false"); }
   function closeModals(){ document.querySelectorAll(".modal.open").forEach(function(m){ m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); }); }
+  /* ================= price alerts (web push) ================= */
+  (function(){
+    var ALERT_API = "https://lootdrop-proxy.vercel.app/api/alerts";
+    var card = $("alertCard"), btn = $("alertBtn"), title = $("alertTitle"), desc = $("alertDesc");
+    var isIOS = /iphone|ipad|ipod/i.test(navigator.userAgent);
+    var standalone = (window.matchMedia && window.matchMedia("(display-mode: standalone)").matches) || navigator.standalone === true;
+    var supported = ("serviceWorker" in navigator) && ("PushManager" in window) && ("Notification" in window);
+    function on(){ return load("alertsOn", false) && supported && Notification.permission === "granted"; }
+    function items(){
+      return Object.keys(state.wish).map(function(k){ return state.wish[k]; })
+        .filter(function(w){ return w.target && w.steamAppID; })
+        .map(function(w){ return { app: w.steamAppID, dealID: w.dealID, title: w.title, targetUSD: parseFloat(w.target) }; });
+    }
+    function b64ToU8(b){ var p = "=".repeat((4 - b.length % 4) % 4); var r = atob((b + p).replace(/-/g, "+").replace(/_/g, "/")); var o = new Uint8Array(r.length); for(var i = 0; i < r.length; i++) o[i] = r.charCodeAt(i); return o; }
+    function render(){
+      var n = items().length;
+      if(!supported){
+        if(isIOS && !standalone){ title.textContent = "🔔 목표가 알림 (아이폰)"; desc.textContent = "아이폰은 공유 버튼 → '홈 화면에 추가'로 설치한 LootDrop에서 알림을 켤 수 있어요."; btn.textContent = "설치 방법"; btn.className = ""; }
+        else { title.textContent = "🔔 목표가 알림"; desc.textContent = "이 브라우저는 알림을 지원하지 않아요. 크롬이나 사파리 최신 버전에서 열어주세요."; btn.style.display = "none"; }
+        return;
+      }
+      if(on()){ title.textContent = "🔔 목표가 알림 켜짐"; desc.textContent = n ? ("목표가를 건 게임 " + n + "개를 지켜보고 있어요. 가격이 떨어지면 알려드릴게요.") : "게임 카드에서 '목표 가격'을 걸어두면 그 가격 이하로 떨어질 때 알려드려요."; btn.textContent = "알림 끄기"; btn.className = "off"; }
+      else { title.textContent = "🔔 목표가 알림 받기"; desc.textContent = "목표가를 걸어둔 게임이 그 가격 이하로 떨어지면 휴대폰으로 알려드려요."; btn.textContent = "알림 켜기"; btn.className = ""; }
+    }
+    function getSub(){ return navigator.serviceWorker.register("/sw.js").then(function(reg){ return navigator.serviceWorker.ready.then(function(){ return reg; }); }).then(function(reg){ return reg.pushManager.getSubscription().then(function(s){ return { reg: reg, sub: s }; }); }); }
+    function post(body){ return fetch(ALERT_API, { method: "POST", headers: { "Content-Type": "application/json" }, body: JSON.stringify(body) }).then(function(r){ if(!r.ok) throw new Error("http " + r.status); return r.json(); }); }
+    function enable(){
+      btn.disabled = true;
+      Notification.requestPermission().then(function(p){
+        if(p !== "granted") throw new Error("denied");
+        return fetch(ALERT_API + "?vapid=1").then(function(r){ return r.json(); }).then(function(k){
+          return getSub().then(function(x){ return x.sub || x.reg.pushManager.subscribe({ userVisibleOnly: true, applicationServerKey: b64ToU8(k.publicKey) }); });
+        });
+      }).then(function(sub){
+        return post({ subscription: sub.toJSON(), items: items(), test: true });
+      }).then(function(){
+        save("alertsOn", true); track("alerts_on", { items: items().length }); toast("알림을 켰어요. 확인 알림이 곧 와요"); render();
+      }).catch(function(e){
+        toast(String(e.message) === "denied" ? "알림이 차단돼 있어요. 설정에서 허용해주세요" : "알림을 켜지 못했어요. 잠시 후 다시 해주세요");
+      }).then(function(){ btn.disabled = false; });
+    }
+    function disable(){
+      getSub().then(function(x){ if(x.sub){ var j = x.sub.toJSON(); return post({ subscription: j, action: "unsubscribe" }).catch(function(){}).then(function(){ return x.sub.unsubscribe(); }); } })
+        .catch(function(){}).then(function(){ save("alertsOn", false); render(); toast("알림을 껐어요"); });
+    }
+    var syncTimer = null;
+    window.__ldAlertsSync = function(){
+      if(!on()) { if(state.tab === "wishlist") render(); return; }
+      clearTimeout(syncTimer);
+      syncTimer = setTimeout(function(){ getSub().then(function(x){ if(x.sub) return post({ subscription: x.sub.toJSON(), items: items() }); }).catch(function(){}); render(); }, 1200);
+    };
+    btn.addEventListener("click", function(){
+      if(!supported){ if(isIOS && !standalone) openInstall(); return; }
+      if(on()) disable(); else enable();
+    });
+    if(supported && "serviceWorker" in navigator) navigator.serviceWorker.register("/sw.js").catch(function(){});
+    render();
+  })();
+
   function isAndroid(){ return /android/i.test(navigator.userAgent); }
   function showOS(os){
     document.querySelectorAll("#osTabs button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-os") === os); });
@@ -1396,4 +1465,3 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
 </script>
 </body>
 </html>
-<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="4f32b6e1-0fed-40d0-b6b4-5a1589e89b2c" data-app-host="app.netlify.com"></script>
