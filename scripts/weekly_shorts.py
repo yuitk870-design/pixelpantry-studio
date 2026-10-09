@@ -20,7 +20,7 @@ f = lambda s, k=False: ImageFont.truetype(FONT_K if k else FONT_B, s)
 BG = (10, 10, 15); PINK = (255, 45, 135); BLUE = (41, 121, 255); YEL = (255, 214, 10)
 WHITE = (255, 255, 255); GRAY = (160, 160, 180); GREEN = (34, 197, 94)
 UA = {"User-Agent": "Mozilla/5.0 (PixelPantry weekly shorts)"}
-SITE = "lootdrop-deals.netlify.app"
+SITE = "lootdrop-deals.vercel.app"
 
 
 def won(v):

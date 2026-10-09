@@ -6,8 +6,8 @@ import requests
 
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "site")
-BASE = "https://lootdrop-deals.netlify.app"
-UA = {"User-Agent": "LootDrop/1.0 (+https://lootdrop-deals.netlify.app; Pixel Pantry studio)"}
+BASE = "https://lootdrop-deals.vercel.app"
+UA = {"User-Agent": "LootDrop/1.0 (+https://lootdrop-deals.vercel.app; Pixel Pantry studio)"}
 CS = "https://www.cheapshark.com/api/1.0"
 KST = dt.timezone(dt.timedelta(hours=9))
 NOW = dt.datetime.now(KST)
