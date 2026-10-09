@@ -21,12 +21,23 @@ EVENTS = [
 ]
 
 
+HEADER_SETS = [
+    UA,
+    {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36",
+     "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US,en;q=0.9"},
+    {},
+]
+
+
 def get(url, params=None, tries=3):
     for i in range(tries):
+        hdr = HEADER_SETS[min(i, len(HEADER_SETS) - 1)]
         try:
-            r = requests.get(url, params=params, headers=UA, timeout=30)
+            r = requests.get(url, params=params, headers=hdr, timeout=30)
             if r.status_code == 429:
                 time.sleep(10 * (i + 1)); continue
+            if not r.ok:
+                print("HTTP", r.status_code, url, params, "hdr#%d" % i, repr(r.text[:300]))
             r.raise_for_status()
             return r.json()
         except Exception as e:
