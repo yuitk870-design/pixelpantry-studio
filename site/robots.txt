@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://lootdrop-deals.netlify.app/sitemap.xml
+Sitemap: https://lootdrop-deals.vercel.app/sitemap.xml
