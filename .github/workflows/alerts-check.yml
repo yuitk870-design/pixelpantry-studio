@@ -1,0 +1,12 @@
+name: Price alert check
+on:
+  schedule:
+    - cron: "41 */3 * * *"
+  workflow_dispatch:
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Ask the alerts server to check wishlist target prices
+        run: curl -sS -m 120 "https://lootdrop-proxy.vercel.app/api/alerts?check=1" || true
