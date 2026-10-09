@@ -82,6 +82,10 @@ svg.i{width:20px;height:20px;flex-shrink:0;}
   padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;
 }
 @media (min-width:860px){ .top-tabs{display:flex;} }
+.guide-links{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:4px 0 18px;}
+.guide-links a{display:flex;align-items:center;gap:10px;padding:12px 14px;border-radius:14px;background:var(--surface-2);color:var(--text);text-decoration:none;font-weight:700;font-size:14px;}
+.guide-links a small{display:block;color:var(--text-dim);font-weight:500;font-size:12px;margin-top:2px;}
+.guide-links a .em{font-size:20px;}
 
 /* ---------- bottom nav (mobile) ---------- */
 .bottom-nav{
@@ -492,6 +496,8 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
       <button class="chip" data-chip="big"><svg><use href="#i-pct"/></svg>최대 할인</button>
     </div>
 
+    <div class="guide-links"><a href="/sale/"><span class="em">🔥</span><span>스팀 세일 특집<small>다음 세일 D-day · 역대 최저가</small></span></a><a href="/game/"><span class="em">📚</span><span>게임별 가격 가이드<small>지금 살까? 기다릴까?</small></span></a></div>
+
     <div id="heroHolder"><div class="hero skeleton"></div></div>
 
     <div class="section-title">인기 급상승 할인</div>
@@ -509,6 +515,7 @@ gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalizatio
       <svg class="i"><use href="#i-search"/></svg>
       <input id="exploreSearch" type="search" placeholder="게임 이름으로 검색" autocomplete="off">
     </label>
+    <div class="guide-links"><a href="/sale/"><span class="em">🔥</span><span>스팀 세일 특집<small>다음 세일 D-day · 역대 최저가</small></span></a><a href="/game/"><span class="em">📚</span><span>게임별 가격 가이드<small>지금 살까? 기다릴까?</small></span></a></div>
     <div class="section-title"><span id="exploreTitle">오늘의 핫딜</span></div>
     <div id="exploreList"></div>
   </section>
