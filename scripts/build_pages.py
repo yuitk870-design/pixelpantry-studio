@@ -7,7 +7,7 @@ import requests
 ROOT = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 SITE = os.path.join(ROOT, "site")
 BASE = "https://lootdrop-deals.netlify.app"
-UA = {"User-Agent": "Mozilla/5.0 (PixelPantry LootDrop pages)"}
+UA = {"User-Agent": "LootDrop/1.0 (+https://lootdrop-deals.netlify.app; Pixel Pantry studio)"}
 CS = "https://www.cheapshark.com/api/1.0"
 KST = dt.timezone(dt.timedelta(hours=9))
 NOW = dt.datetime.now(KST)
@@ -21,12 +21,7 @@ EVENTS = [
 ]
 
 
-HEADER_SETS = [
-    UA,
-    {"User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/129.0 Safari/537.36",
-     "Accept": "application/json, text/plain, */*", "Accept-Language": "en-US,en;q=0.9"},
-    {},
-]
+HEADER_SETS = [UA, {**UA, "Accept": "application/json"}]
 
 
 def get(url, params=None, tries=3):
