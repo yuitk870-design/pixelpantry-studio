@@ -1,0 +1,1399 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<!-- This site is hosted on Netlify. Anyone can build and deploy a site
+     like this one for free: https://netlify.new/?utm_campaign=loops&utm_source=ai-legible&utm_medium=owned&utm_content=comment&utm_id=4f32b6e1-0fed-40d0-b6b4-5a1589e89b2c
+     Netlify hosting facts for this site: static/SSR served via Netlify Edge. -->
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>LootDrop — 스팀 게임 할인 정보</title>
+<meta name="description" content="스팀 게임 할인을 원화로 한눈에. 오늘의 특가, 가격 변동 그래프, 목표가 위시리스트까지.">
+<meta name="google-site-verification" content="43MS_gKDZBJfsr2UTCMZKSi2pNmGIytnfwBOry5nIcU" />
+<link rel="canonical" href="https://lootdrop-deals.netlify.app/">
+<meta name="robots" content="index, follow">
+<meta name="keywords" content="스팀 할인, 스팀 세일, 게임 할인, Steam sale, 스팀 최저가, 게임 특가">
+<meta name="theme-color" content="#0A0A0F">
+<meta property="og:type" content="website">
+<meta property="og:title" content="LootDrop — 스팀 게임 할인 정보">
+<meta property="og:description" content="스팀 게임 할인을 원화로 한눈에. 오늘의 특가, 가격 변동 그래프, 목표가 위시리스트까지.">
+<meta property="og:url" content="https://lootdrop-deals.netlify.app">
+<meta property="og:image" content="https://lootdrop-deals.netlify.app/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:locale" content="ko_KR">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="LootDrop — 스팀 게임 할인 정보">
+<meta name="twitter:description" content="스팀 게임 할인을 원화로 한눈에. 오늘의 특가, 가격 변동 그래프, 목표가 위시리스트까지.">
+<meta name="twitter:image" content="https://lootdrop-deals.netlify.app/og-image.png">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:ital,wght@0,500;0,600;0,700;0,800;0,900;1,900&family=Noto+Sans+KR:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0A0A0F;
+  --surface:#15151C;
+  --surface-2:#1E1E28;
+  --border:#262632;
+  --text:#F4F5FA;
+  --text-dim:#9A9CB0;
+  --blue:#1F6BFF;
+  --blue-soft:#1F6BFF22;
+  --yellow:#FFE11A;
+  --pink:#FF2E93;
+  --pink-soft:#FF2E9326;
+  --green:#22C55E;
+  --radius:18px;
+  --nav-h:64px;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+[hidden]{display:none !important;}
+img.img-missing{visibility:hidden;}
+html,body{margin:0;padding:0;}
+body{
+  background:var(--bg);color:var(--text);
+  font-family:"Poppins","Noto Sans KR",-apple-system,BlinkMacSystemFont,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+  min-height:100vh;
+  padding-bottom:calc(var(--nav-h) + env(safe-area-inset-bottom) + 24px);
+}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;color:inherit;}
+svg.i{width:20px;height:20px;flex-shrink:0;}
+.wrap{max-width:1100px;margin:0 auto;padding:0 16px;}
+
+/* ---------- top bar ---------- */
+.topbar{
+  position:sticky;top:0;z-index:30;
+  background:rgba(10,10,15,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-bottom:1px solid transparent;
+}
+.topbar.scrolled{border-bottom-color:var(--border);}
+.topbar .wrap{display:flex;align-items:center;gap:16px;height:60px;padding-top:env(safe-area-inset-top);}
+.logo{display:flex;flex-direction:column;line-height:1;cursor:pointer;}
+.logo b{font-family:"Poppins",sans-serif;font-weight:900;font-style:italic;font-size:24px;letter-spacing:-.02em;color:var(--blue);}
+.logo small{font-size:10px;color:var(--text-dim);margin-top:3px;letter-spacing:.02em;}
+.top-tabs{display:none;gap:4px;margin-left:24px;}
+.top-tabs button{background:none;border:0;color:var(--text-dim);font-weight:600;font-size:14px;padding:8px 14px;border-radius:999px;cursor:pointer;}
+.top-tabs button.active{color:var(--text);background:var(--surface-2);}
+.top-spacer{flex:1;}
+.get-app{
+  display:inline-flex;align-items:center;gap:6px;
+  background:var(--pink);color:#fff;border:0;border-radius:999px;
+  padding:9px 14px;font-weight:700;font-size:13px;cursor:pointer;white-space:nowrap;
+}
+@media (min-width:860px){ .top-tabs{display:flex;} }
+
+/* ---------- bottom nav (mobile) ---------- */
+.bottom-nav{
+  position:fixed;left:0;right:0;bottom:0;z-index:40;
+  background:rgba(14,14,20,.96);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  border-top:1px solid var(--border);
+  padding-bottom:env(safe-area-inset-bottom);
+}
+.bottom-nav .row{display:flex;justify-content:space-around;height:var(--nav-h);max-width:560px;margin:0 auto;}
+.bottom-nav button{
+  flex:1;background:none;border:0;color:var(--text-dim);cursor:pointer;
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;font-size:11px;font-weight:600;
+}
+.bottom-nav button.active{color:var(--blue);}
+.bottom-nav .badge-dot{position:relative;}
+.bottom-nav .count{
+  position:absolute;top:-6px;right:-10px;background:var(--pink);color:#fff;font-size:10px;font-weight:700;
+  min-width:16px;height:16px;border-radius:999px;display:flex;align-items:center;justify-content:center;padding:0 4px;
+}
+@media (min-width:860px){ .bottom-nav{display:none;} body{padding-bottom:40px;} }
+
+/* ---------- common ---------- */
+.view{display:none;padding-top:8px;}
+.view.active{display:block;}
+.section-title{font-size:19px;font-weight:700;margin:26px 0 12px;display:flex;align-items:center;justify-content:space-between;gap:10px;}
+.section-title .more{font-size:13px;color:var(--text-dim);font-weight:500;background:none;border:0;cursor:pointer;}
+.note{font-size:12px;color:var(--text-dim);}
+.pill-yellow{background:var(--yellow);color:#111;font-weight:800;font-size:12px;padding:4px 10px;border-radius:999px;font-family:"Poppins",sans-serif;}
+.pill-pink{background:var(--pink-soft);color:var(--pink);font-weight:700;font-size:11px;padding:2px 7px;border-radius:6px;font-family:"Poppins",sans-serif;}
+.pill-store{background:#000;border:1px solid var(--border);color:var(--text);font-size:11px;font-weight:600;padding:5px 11px;border-radius:999px;white-space:nowrap;}
+.price-now{color:var(--blue);font-weight:800;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
+.price-old{color:var(--text-dim);text-decoration:line-through;font-size:12px;font-variant-numeric:tabular-nums;}
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  border:0;border-radius:12px;padding:12px 16px;font-weight:700;font-size:14px;cursor:pointer;
+}
+.btn-blue{background:var(--blue);color:#fff;}
+.btn-ghost{background:var(--surface-2);color:var(--text);border:1px solid var(--border);}
+.icon-btn{
+  width:36px;height:36px;border-radius:50%;border:1px solid var(--border);
+  background:rgba(10,10,15,.6);display:flex;align-items:center;justify-content:center;cursor:pointer;color:var(--text);
+}
+.icon-btn.active{color:var(--pink);border-color:var(--pink);}
+.icon-btn svg{width:17px;height:17px;}
+.empty,.loading-box,.error-box{text-align:center;color:var(--text-dim);padding:48px 16px;font-size:14px;}
+.error-box{color:var(--pink);}
+.skeleton{background:linear-gradient(90deg,var(--surface) 25%,var(--surface-2) 37%,var(--surface) 63%);background-size:400% 100%;animation:shimmer 1.4s infinite;}
+@keyframes shimmer{0%{background-position:100% 0}100%{background-position:0 0}}
+
+/* ---------- install banner ---------- */
+.install-banner{
+  display:flex;align-items:center;gap:12px;margin-top:10px;
+  background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:12px 14px;
+}
+.install-banner .ic{width:38px;height:38px;border-radius:10px;background:var(--blue);display:flex;align-items:center;justify-content:center;color:#fff;flex-shrink:0;}
+.install-banner .txt{flex:1;font-size:13px;line-height:1.4;}
+.install-banner .txt b{display:block;font-size:14px;}
+.install-banner .txt span{color:var(--text-dim);}
+.install-banner .close{background:none;border:0;color:var(--text-dim);cursor:pointer;padding:4px;}
+
+/* ---------- search ---------- */
+.search{position:relative;margin-top:16px;}
+.search input{
+  width:100%;height:52px;border-radius:16px;border:1px solid transparent;
+  background:var(--surface);color:var(--text);font-size:15px;padding:0 16px 0 48px;outline:none;font-family:inherit;
+}
+.search input:focus{border-color:var(--blue);}
+.search svg{position:absolute;left:16px;top:50%;transform:translateY(-50%);color:var(--text);}
+
+/* ---------- chips ---------- */
+.chips{display:flex;gap:8px;overflow-x:auto;margin:16px -16px 0;padding:0 16px 4px;scrollbar-width:none;}
+.chips::-webkit-scrollbar{display:none;}
+.chip{
+  display:inline-flex;align-items:center;gap:6px;white-space:nowrap;
+  background:var(--surface);border:1px solid var(--border);color:var(--text);
+  border-radius:999px;padding:9px 15px;font-size:13px;font-weight:700;cursor:pointer;
+}
+.chip svg{width:14px;height:14px;}
+.chip.active{background:var(--blue);border-color:var(--blue);color:#fff;}
+
+/* ---------- hero ---------- */
+.hero{
+  margin-top:18px;border-radius:22px;padding:22px 22px;cursor:pointer;
+  background:linear-gradient(110deg,var(--pink) 0%,#7B4DFF 55%,var(--blue) 100%);
+  display:flex;align-items:center;gap:14px;min-height:132px;
+  box-shadow:0 18px 40px -18px #7B4DFFaa;
+}
+.hero .txt{flex:1;min-width:0;}
+.hero .label{font-size:13px;font-weight:700;opacity:.95;}
+.hero .big{font-family:"Poppins",sans-serif;font-weight:900;font-size:30px;color:var(--yellow);line-height:1.15;margin:4px 0 6px;}
+.hero .name{font-size:14px;font-weight:700;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.hero .price{margin-top:6px;font-size:13px;opacity:.95;}
+.hero .ic{width:58px;height:58px;border-radius:16px;background:rgba(255,255,255,.18);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.hero .ic svg{width:28px;height:28px;}
+.hero.skeleton{box-shadow:none;}
+
+/* ---------- trending (big cards, horizontal) ---------- */
+.trend-row{display:flex;gap:14px;overflow-x:auto;margin:0 -16px;padding:0 16px 6px;scroll-snap-type:x mandatory;scrollbar-width:none;}
+.trend-row::-webkit-scrollbar{display:none;}
+.trend-card{
+  position:relative;flex:0 0 78%;max-width:340px;aspect-ratio:4/3.1;border-radius:22px;overflow:hidden;
+  background:var(--surface);cursor:pointer;scroll-snap-align:start;
+}
+@media (min-width:860px){ .trend-card{flex-basis:300px;} }
+.trend-card img{width:100%;height:100%;object-fit:cover;display:block;}
+.trend-card .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 35%,rgba(0,0,0,.88) 100%);}
+.trend-card .pill-yellow{position:absolute;top:12px;right:12px;}
+.trend-card .info{position:absolute;left:16px;right:16px;bottom:14px;}
+.trend-card .t{font-weight:800;font-size:17px;line-height:1.25;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+.trend-card .p{margin-top:6px;display:flex;align-items:baseline;gap:8px;}
+.trend-card .p .now{color:var(--yellow);font-weight:800;font-size:18px;font-family:"Poppins",sans-serif;}
+.trend-card .p .old{color:#c9cad6;text-decoration:line-through;font-size:12px;}
+
+/* ---------- deal grid (home) ---------- */
+.deal-grid{display:grid;grid-template-columns:1fr;gap:14px;}
+@media (min-width:640px){ .deal-grid{grid-template-columns:repeat(2,1fr);} }
+@media (min-width:980px){ .deal-grid{grid-template-columns:repeat(3,1fr);} }
+.deal-card{background:var(--surface);border-radius:var(--radius);overflow:hidden;cursor:pointer;border:1px solid transparent;transition:border-color .15s;}
+.deal-card:hover{border-color:var(--border);}
+.deal-card .img{position:relative;aspect-ratio:460/215;background:var(--surface-2);}
+.deal-card .img img{width:100%;height:100%;object-fit:cover;display:block;}
+.deal-card .img .pill-yellow{position:absolute;top:10px;right:10px;}
+.deal-card .img .shade{position:absolute;inset:0;background:linear-gradient(180deg,transparent 45%,rgba(0,0,0,.75));}
+.deal-card .img .t{position:absolute;left:14px;right:14px;bottom:10px;font-weight:800;font-size:15px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.deal-card .row{display:flex;align-items:center;justify-content:space-between;gap:10px;padding:12px 14px 14px;}
+.deal-card .row .store{font-size:11px;color:var(--text-dim);}
+.deal-card .row .prices{display:flex;align-items:baseline;gap:8px;margin-top:2px;}
+.deal-card .row .price-now{font-size:17px;}
+.deal-card .buy{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:9px 16px;font-weight:700;font-size:13px;cursor:pointer;display:inline-flex;gap:6px;align-items:center;}
+.deal-card .buy svg{width:14px;height:14px;}
+.load-more{display:flex;justify-content:center;margin-top:18px;}
+
+/* ---------- list item (explore) ---------- */
+.list{display:flex;flex-direction:column;gap:10px;}
+@media (min-width:860px){ .list{display:grid;grid-template-columns:repeat(2,1fr);} }
+.list-item{
+  display:flex;align-items:center;gap:12px;background:var(--surface);border-radius:16px;padding:10px;cursor:pointer;
+}
+.list-item .thumb{width:72px;height:72px;border-radius:12px;overflow:hidden;flex-shrink:0;background:var(--surface-2);}
+.list-item .thumb img{width:100%;height:100%;object-fit:cover;display:block;}
+.list-item .mid{flex:1;min-width:0;display:flex;flex-direction:column;gap:4px;}
+.list-item .top{display:flex;align-items:center;gap:8px;}
+.list-item .name{font-weight:700;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.list-item .prices{display:flex;align-items:baseline;gap:6px;}
+.list-item .prices .price-now{font-size:15px;}
+.list-item .right{display:flex;flex-direction:column;align-items:flex-end;gap:8px;}
+.list-item .heart{background:none;border:0;color:var(--text-dim);cursor:pointer;padding:2px;}
+.list-item .heart.active{color:var(--pink);}
+.list-item .heart svg{width:18px;height:18px;}
+
+/* ---------- wishlist ---------- */
+.page-head h1{font-size:26px;font-weight:800;margin:18px 0 4px;}
+.page-head p{margin:0;color:var(--text-dim);font-size:13px;display:flex;align-items:center;gap:6px;}
+.page-head p svg{width:14px;height:14px;color:var(--pink);}
+.stats{display:grid;grid-template-columns:1fr 1fr;margin-top:16px;background:#0D1430;border:1px solid #1B2550;border-radius:18px;}
+.stats div{padding:16px;text-align:center;}
+.stats div+div{border-left:1px solid #1B2550;}
+.stats small{display:block;font-size:11px;color:#C9D3FF;font-weight:600;}
+.stats b{display:block;font-size:20px;margin-top:6px;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
+.stats .y{color:var(--yellow);}
+.wish-grid{display:grid;grid-template-columns:1fr;gap:16px;margin-top:18px;}
+@media (min-width:760px){ .wish-grid{grid-template-columns:repeat(2,1fr);} }
+.wish-card{background:var(--surface);border-radius:22px;overflow:hidden;}
+.wish-card .img{position:relative;aspect-ratio:460/180;background:var(--surface-2);cursor:pointer;}
+.wish-card .img img{width:100%;height:100%;object-fit:cover;display:block;}
+.wish-card .img .pill-store{position:absolute;top:10px;right:10px;}
+.wish-card .img .t{
+  position:absolute;left:12px;bottom:12px;max-width:calc(100% - 24px);
+  background:var(--blue);color:#fff;font-weight:800;font-size:14px;padding:7px 12px;border-radius:10px;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
+}
+.wish-card .body{padding:14px 16px 16px;}
+.wish-card .cols{display:flex;justify-content:space-between;align-items:flex-end;}
+.wish-card .cols small{display:block;font-size:11px;color:var(--text-dim);margin-bottom:3px;}
+.wish-card .target{color:var(--yellow);font-weight:800;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;cursor:pointer;display:inline-flex;align-items:center;gap:6px;}
+.wish-card .target svg{width:13px;height:13px;opacity:.7;}
+.wish-card .cur{display:flex;align-items:center;gap:6px;justify-content:flex-end;font-weight:800;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
+.wish-card .cur .pct{background:var(--green);color:#04210f;font-size:11px;padding:2px 7px;border-radius:999px;font-weight:800;}
+.wish-card .status{font-size:12px;margin:12px 0 6px;font-weight:600;}
+.bar{height:6px;border-radius:999px;background:var(--surface-2);overflow:hidden;}
+.bar span{display:block;height:100%;border-radius:999px;}
+.wish-card .actions{display:flex;gap:10px;margin-top:14px;}
+.wish-card .actions .btn-blue{flex:1;}
+.wish-card .actions .del{width:46px;padding:0;}
+
+/* ---------- settings ---------- */
+.card-block{background:var(--surface);border-radius:18px;padding:6px 16px;margin-top:14px;}
+.set-row{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 0;}
+.set-row+.set-row{border-top:1px solid var(--border);}
+.set-row .l b{display:block;font-size:14px;}
+.set-row .l span{font-size:12px;color:var(--text-dim);}
+.seg{display:flex;background:var(--surface-2);border-radius:10px;padding:3px;gap:2px;}
+.seg button{white-space:nowrap;background:none;border:0;color:var(--text-dim);font-weight:700;font-size:12px;padding:7px 10px;border-radius:8px;cursor:pointer;}
+.seg button.active{background:var(--blue);color:#fff;}
+.credits{font-size:12px;color:var(--text-dim);line-height:1.7;margin-top:14px;}
+.credits a{text-decoration:underline;}
+
+/* ---------- detail (full page overlay) ---------- */
+.detail{
+  position:fixed;inset:0;z-index:60;background:var(--bg);overflow-y:auto;
+  transform:translateY(24px);opacity:0;pointer-events:none;transition:opacity .18s ease,transform .18s ease;
+}
+.detail.open{transform:none;opacity:1;pointer-events:auto;}
+.detail .inner{max-width:760px;margin:0 auto;padding-bottom:calc(110px + env(safe-area-inset-bottom));}
+.d-hero{position:relative;aspect-ratio:16/10;max-height:440px;width:100%;background:var(--surface-2);overflow:hidden;}
+@media (min-width:760px){ .d-hero{border-radius:0 0 24px 24px;} }
+.d-hero img{width:100%;height:100%;object-fit:cover;display:block;}
+.d-hero .shade{position:absolute;inset:0;background:linear-gradient(180deg,rgba(0,0,0,.35) 0%,transparent 30%,rgba(10,10,15,.55) 70%,var(--bg) 100%);}
+.d-hero .tb{position:absolute;top:calc(12px + env(safe-area-inset-top));left:14px;right:14px;display:flex;justify-content:space-between;}
+.d-hero .info{position:absolute;left:18px;right:18px;bottom:16px;}
+.d-hero .rating{display:flex;align-items:center;gap:6px;font-size:13px;font-weight:700;}
+.d-hero .rating svg{width:15px;height:15px;color:var(--yellow);}
+.d-hero h2{margin:6px 0 0;font-size:26px;line-height:1.2;font-weight:800;}
+.d-hero .pub{font-size:12px;color:#d0d2de;margin-top:6px;}
+/* detail layout: one column on phones (price right after the rating tiles), two columns on wide screens */
+.d-body{display:flex;flex-direction:column;}
+.d-main,.d-side{display:contents;}
+.d-body .tiles{order:1;} .d-body .price-block{order:2;} .d-body .block:not(.price-block){order:3;}
+.side-wish{display:none;}
+.side-wish.on{color:var(--pink);border-color:var(--pink);}
+.side-wish svg{width:16px;height:16px;}
+@media (min-width:980px){
+  .detail .inner{max-width:1100px !important;padding-bottom:40px !important;}
+  .d-hero{aspect-ratio:auto !important;height:420px;border-radius:0 0 28px 28px;}
+  .d-hero .info{left:32px;right:32px;bottom:28px;}
+  .d-hero h2{font-size:38px;}
+  .d-body{display:grid !important;grid-template-columns:minmax(0,1fr) 360px;grid-template-areas:"main side" "main2 side";column-gap:20px;row-gap:14px;padding:20px 24px 0 !important;align-items:start;}
+  .d-main{display:flex;flex-direction:column;gap:14px;grid-area:main;}
+  .d-main2{grid-area:main2;}
+  .d-side{display:block;grid-area:side;position:sticky;top:20px;}
+  .side-wish{display:inline-flex;}
+  .d-bottom{display:none !important;}
+}
+.d-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:10px;}
+.d-chips span{background:rgba(255,255,255,.12);backdrop-filter:blur(6px);font-size:11px;font-weight:600;padding:4px 10px;border-radius:999px;}
+.reviews{display:flex;flex-direction:column;gap:10px;}
+.review{background:var(--surface-2);border-radius:14px;padding:12px 14px;}
+.rv-top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:6px;}
+.rv-badge{display:inline-flex;align-items:center;gap:5px;font-size:12px;font-weight:700;}
+.rv-badge svg{width:14px;height:14px;}
+.rv-badge.up{color:var(--green);}
+.rv-badge.down{color:#EF4444;}
+.rv-badge.down svg{transform:rotate(180deg);}
+.rv-hrs{font-size:11px;color:var(--text-dim);}
+.rv-text{margin:0;font-size:13px;line-height:1.55;color:#D5D5E0;white-space:pre-line;word-break:break-word;}
+.rv-text.clamp{display:-webkit-box;-webkit-line-clamp:4;-webkit-box-orient:vertical;overflow:hidden;}
+.rv-more{background:none;border:0;color:var(--blue);font-weight:700;font-size:12px;padding:6px 0 0;cursor:pointer;}
+.d-body{padding:4px 16px 0;display:flex;flex-direction:column;gap:14px;}
+.tiles{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.tile{background:var(--surface);border-radius:16px;padding:14px;}
+.tile small{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--text-dim);}
+.tile small svg{width:14px;height:14px;}
+.tile .v{font-size:24px;font-weight:800;margin-top:8px;font-family:"Poppins",sans-serif;}
+.tile .s{font-size:12px;color:var(--text-dim);margin-top:2px;}
+.meta-box{width:44px;height:44px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-weight:800;font-size:18px;margin-top:8px;background:var(--surface-2);color:#fff;font-family:"Poppins",sans-serif;}
+.block{background:var(--surface);border-radius:18px;padding:16px;}
+.block h3{margin:0 0 12px;font-size:15px;display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.block h3 .l{display:flex;align-items:center;gap:8px;}
+.block h3 svg{width:16px;height:16px;color:var(--blue);}
+.price-big{display:flex;align-items:baseline;gap:10px;flex-wrap:wrap;}
+.price-big .now{font-size:28px;font-weight:900;color:var(--text);font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
+.price-big .save{background:var(--green);color:#04210f;font-weight:800;font-size:12px;padding:3px 9px;border-radius:999px;}
+.low-row{display:flex;justify-content:space-between;align-items:center;margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;}
+.low-row b{color:var(--yellow);font-family:"Poppins",sans-serif;}
+.range-select{background:var(--surface-2);color:var(--text-dim);border:1px solid var(--border);border-radius:8px;padding:4px 8px;font-size:12px;font-family:inherit;}
+.chart-note{font-size:11px;color:var(--text-dim);margin-top:6px;}
+.block svg.chart{display:block;width:100%;height:auto;}
+.desc{font-size:13.5px;line-height:1.6;color:#D5D5E0;margin:0;}
+.genres{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.genres span{background:var(--surface-2);color:var(--text-dim);font-size:11px;padding:4px 10px;border-radius:999px;}
+.shots{display:flex;gap:10px;overflow-x:auto;margin:0 -16px;padding:0 16px 4px;scrollbar-width:none;}
+.shots::-webkit-scrollbar{display:none;}
+.shots img{height:120px;border-radius:12px;display:block;flex-shrink:0;}
+.d-bottom{
+  position:fixed;left:0;right:0;bottom:0;z-index:61;
+  background:rgba(14,14,20,.97);border-top:1px solid var(--border);
+  padding:12px 16px calc(12px + env(safe-area-inset-bottom));
+}
+.d-bottom .row{max-width:760px;margin:0 auto;display:flex;align-items:center;gap:8px;}
+.d-bottom .cp{flex:1;min-width:0;}
+.d-bottom .cp small{font-size:10px;color:var(--text-dim);font-weight:700;letter-spacing:.05em;}
+.d-bottom .cp .line{display:flex;align-items:baseline;gap:6px;margin-top:2px;white-space:nowrap;}
+@media (max-width:400px){.d-bottom .cp .save{display:none;}.d-bottom .wish-btn{padding:12px 14px;}}
+.d-bottom .cp .now{font-size:20px;font-weight:900;font-family:"Poppins",sans-serif;font-variant-numeric:tabular-nums;}
+.d-bottom .cp .save{background:var(--green);color:#04210f;font-weight:800;font-size:10px;padding:2px 7px;border-radius:999px;}
+.d-bottom .wish-btn{background:var(--blue);color:#fff;border:0;border-radius:999px;padding:12px 18px;font-weight:700;font-size:14px;display:inline-flex;align-items:center;gap:6px;cursor:pointer;white-space:nowrap;}
+.d-bottom .wish-btn.on{background:var(--pink);}
+.d-bottom .wish-btn svg{width:16px;height:16px;}
+.d-bottom .store-btn{width:42px;height:42px;cursor:pointer;color:inherit;border-radius:50%;border:1px solid var(--border);background:var(--surface-2);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.d-bottom .store-btn svg{width:18px;height:18px;}
+
+/* ---------- modal ---------- */
+.modal{
+  position:fixed;inset:0;z-index:80;background:rgba(5,5,9,.7);
+  display:flex;align-items:flex-end;justify-content:center;
+  opacity:0;pointer-events:none;transition:opacity .15s ease;
+}
+.modal.open{opacity:1;pointer-events:auto;}
+@media (min-width:640px){ .modal{align-items:center;} }
+.modal .box{
+  background:var(--surface);border:1px solid var(--border);width:100%;max-width:440px;max-height:90vh;overflow:auto;
+  border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));
+}
+@media (min-width:640px){ .modal .box{border-radius:24px;} }
+.modal h3{margin:0 0 6px;font-size:19px;}
+.modal p.sub{margin:0 0 16px;font-size:13px;color:var(--text-dim);line-height:1.5;}
+.tabs-mini{display:flex;gap:6px;margin-bottom:14px;}
+.tabs-mini button{flex:1;background:var(--surface-2);border:1px solid var(--border);color:var(--text-dim);border-radius:10px;padding:9px;font-weight:700;font-size:13px;cursor:pointer;}
+.tabs-mini button.active{background:var(--blue-soft);border-color:var(--blue);color:var(--text);}
+.steps{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px;}
+.steps li{display:flex;gap:12px;align-items:flex-start;font-size:14px;line-height:1.5;}
+.steps li .n{width:24px;height:24px;border-radius:50%;background:var(--blue);color:#fff;font-weight:800;font-size:12px;display:flex;align-items:center;justify-content:center;flex-shrink:0;margin-top:1px;}
+.steps li .kbd{display:inline-flex;align-items:center;gap:4px;background:var(--surface-2);border:1px solid var(--border);border-radius:6px;padding:1px 6px;font-size:12px;font-weight:700;}
+.steps li .kbd svg{width:13px;height:13px;}
+.modal .actions{display:flex;flex-direction:column;gap:10px;margin-top:20px;}
+.modal .soon{font-size:12px;color:var(--text-dim);text-align:center;margin-top:10px;}
+.target-input{display:flex;align-items:center;gap:8px;background:var(--surface-2);border:1px solid var(--border);border-radius:12px;padding:0 14px;height:50px;}
+.target-input span{color:var(--text-dim);font-weight:700;}
+.target-input input{flex:1;background:none;border:0;color:var(--text);font-size:18px;font-weight:700;outline:none;font-family:"Poppins",sans-serif;min-width:0;}
+
+.toast{
+  position:fixed;left:50%;bottom:calc(var(--nav-h) + 20px + env(safe-area-inset-bottom));transform:translateX(-50%) translateY(10px);
+  background:#fff;color:#111;font-weight:700;font-size:13px;padding:10px 16px;border-radius:999px;z-index:90;
+  opacity:0;pointer-events:none;transition:all .2s ease;white-space:nowrap;
+}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0);}
+</style>
+<!-- Google Analytics (visitor stats; ad signals off) -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-EKX2S6X3T0"></script>
+<script>
+window.dataLayer=window.dataLayer||[];function gtag(){dataLayer.push(arguments);}
+gtag('js',new Date());
+gtag('config','G-EKX2S6X3T0',{allow_google_signals:false,allow_ad_personalization_signals:false});
+</script>
+</head>
+<body>
+
+<!-- icon sprite -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <defs>
+    <symbol id="i-home" viewBox="0 0 24 24"><path fill="currentColor" d="M12 3.2 2.5 11h2.7v9.3h5.3v-6h3v6h5.3V11h2.7z"/></symbol>
+    <symbol id="i-search" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" d="M10.5 4a6.5 6.5 0 1 1 0 13 6.5 6.5 0 0 1 0-13zM20 20l-4.6-4.6"/></symbol>
+    <symbol id="i-heart" viewBox="0 0 24 24"><path fill="currentColor" d="M12 20.6 10.6 19.3C5.6 14.8 2.4 11.9 2.4 8.3 2.4 5.4 4.7 3.1 7.6 3.1c1.6 0 3.2.8 4.4 2 1.2-1.2 2.8-2 4.4-2 2.9 0 5.2 2.3 5.2 5.2 0 3.6-3.2 6.5-8.2 11z"/></symbol>
+    <symbol id="i-heart-o" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" d="M12 19.6 10.9 18.6C6.1 14.3 3.4 11.7 3.4 8.4c0-2.4 1.8-4.3 4.2-4.3 1.5 0 3 .8 4.4 2.4 1.4-1.6 2.9-2.4 4.4-2.4 2.4 0 4.2 1.9 4.2 4.3 0 3.3-2.7 5.9-7.5 10.2z"/></symbol>
+    <symbol id="i-gear" viewBox="0 0 24 24"><path fill="currentColor" d="M19.4 13a7.6 7.6 0 0 0 0-2l2.1-1.6-2-3.5-2.5 1a7.7 7.7 0 0 0-1.7-1L15 3.3h-4l-.4 2.6a7.7 7.7 0 0 0-1.7 1l-2.5-1-2 3.5L6.5 11a7.6 7.6 0 0 0 0 2l-2.1 1.6 2 3.5 2.5-1c.5.4 1.1.7 1.7 1l.4 2.6h4l.4-2.6c.6-.3 1.2-.6 1.7-1l2.5 1 2-3.5zM13 15.5a3.5 3.5 0 1 1 0-7 3.5 3.5 0 0 1 0 7z" transform="translate(-1 0)"/></symbol>
+    <symbol id="i-back" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" d="M15 5l-7 7 7 7"/></symbol>
+    <symbol id="i-x" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" d="M6 6l12 12M18 6 6 18"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M8 7l4-4 4 4M5 12v7a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2v-7"/></symbol>
+    <symbol id="i-dots" viewBox="0 0 24 24"><circle cx="12" cy="5" r="2" fill="currentColor"/><circle cx="12" cy="12" r="2" fill="currentColor"/><circle cx="12" cy="19" r="2" fill="currentColor"/></symbol>
+    <symbol id="i-plus-sq" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="4" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 8v8M8 12h8"/></symbol>
+    <symbol id="i-phone" viewBox="0 0 24 24"><rect x="6" y="2.5" width="12" height="19" rx="3" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M10.5 18.5h3"/></symbol>
+    <symbol id="i-trash" viewBox="0 0 24 24"><path fill="currentColor" d="M9 3h6l1 2h4v2H4V5h4zM6 8h12l-1 13H7z"/></symbol>
+    <symbol id="i-share" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M12 3v12M7 8l5-5 5 5M5 13v6a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-6"/></symbol>
+    <symbol id="i-ext" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M14 4h6v6M20 4l-9 9M18 14v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h5"/></symbol>
+    <symbol id="i-cart" viewBox="0 0 24 24"><path fill="currentColor" d="M7 18a2 2 0 1 0 0 4 2 2 0 0 0 0-4zm10 0a2 2 0 1 0 0 4 2 2 0 0 0 0-4zM5.2 4l.9 2H21l-3.4 7.2a2 2 0 0 1-1.8 1.1H8.6l-.9 1.7H19v2H6.4a1.5 1.5 0 0 1-1.3-2.2L6.5 13 3.1 4H1V2h3.4z"/></symbol>
+    <symbol id="i-star" viewBox="0 0 24 24"><path fill="currentColor" d="m12 2.8 2.8 6 6.5.7-4.9 4.4 1.4 6.4L12 17l-5.8 3.3 1.4-6.4-4.9-4.4 6.5-.7z"/></symbol>
+    <symbol id="i-thumb" viewBox="0 0 24 24"><path fill="currentColor" d="M2 10h4v11H2zm6 11h9.3a2 2 0 0 0 2-1.6l1.6-8A2 2 0 0 0 19 9h-5.5l.8-3.9a1.8 1.8 0 0 0-3.2-1.4L8 9.5z"/></symbol>
+    <symbol id="i-tag" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linejoin="round" d="M3 12V4a1 1 0 0 1 1-1h8l9 9-9 9z"/><circle cx="7.5" cy="7.5" r="1.6" fill="currentColor"/></symbol>
+    <symbol id="i-chart" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" d="M3 3v18h18M7 15l4-5 3 3 5-7"/></symbol>
+    <symbol id="i-info" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="none" stroke="currentColor" stroke-width="2"/><path stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M12 11v6M12 7.5v.5"/></symbol>
+    <symbol id="i-gauge" viewBox="0 0 24 24"><path fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" d="M4 16a8 8 0 1 1 16 0M12 16l4-5"/></symbol>
+    <symbol id="i-fire" viewBox="0 0 24 24"><path fill="currentColor" d="M13 2s1 3-1.5 6S9 12 9 12s-1-1.5-.5-3C6 11 5 13.5 5 15.5A7 7 0 0 0 19 15c0-5-4-7-6-13z"/></symbol>
+    <symbol id="i-pad" viewBox="0 0 24 24"><path fill="currentColor" d="M7 7h10a5 5 0 0 1 4.9 6l-.7 3.5a2.6 2.6 0 0 1-4.4 1.3L14.2 15H9.8l-2.6 2.8a2.6 2.6 0 0 1-4.4-1.3L2.1 13A5 5 0 0 1 7 7zm1 3v1.3H6.7v1.4H8V14h1.4v-1.3h1.3v-1.4H9.4V10zm7.5 0a1 1 0 1 0 0 2 1 1 0 0 0 0-2zm2 2a1 1 0 1 0 0 2 1 1 0 0 0 0-2z"/></symbol>
+    <symbol id="i-spark" viewBox="0 0 24 24"><path fill="currentColor" d="M12 2l2 6 6 2-6 2-2 6-2-6-6-2 6-2zM19 15l1 2.5 2.5 1-2.5 1L19 22l-1-2.5-2.5-1 2.5-1z"/></symbol>
+    <symbol id="i-pct" viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="currentColor"/><path stroke="#0A0A0F" stroke-width="2" stroke-linecap="round" d="M8.5 15.5l7-7"/><circle cx="9" cy="9" r="1.4" fill="#0A0A0F"/><circle cx="15" cy="15" r="1.4" fill="#0A0A0F"/></symbol>
+    <symbol id="i-edit" viewBox="0 0 24 24"><path fill="currentColor" d="M4 17.3V20h2.7l8-8-2.7-2.7zm14.7-7.4a1 1 0 0 0 0-1.4l-1.2-1.2a1 1 0 0 0-1.4 0l-1 1 2.6 2.6z"/></symbol>
+  </defs>
+</svg>
+
+<header class="topbar" id="topbar">
+  <div class="wrap">
+    <div class="logo" id="logo" role="button" tabindex="0"><b>LOOTDROP</b><small>다음 보물을 찾아보세요</small></div>
+    <nav class="top-tabs" id="topTabs">
+      <button data-tab="home" class="active">홈</button>
+      <button data-tab="explore">탐색</button>
+      <button data-tab="wishlist">위시리스트</button>
+      <button data-tab="settings">설정</button>
+    </nav>
+    <div class="top-spacer"></div>
+    <button class="get-app" id="getAppTop"><svg class="i" style="width:16px;height:16px"><use href="#i-phone"/></svg>앱 받기</button>
+  </div>
+</header>
+
+<main class="wrap">
+
+  <!-- HOME -->
+  <section class="view active" id="view-home">
+    <div class="install-banner" id="installBanner" hidden>
+      <div class="ic"><svg class="i"><use href="#i-phone"/></svg></div>
+      <div class="txt"><b>LootDrop을 앱으로 써 보세요</b><span>홈 화면에 추가하면 아이콘 한 번으로 바로 열려요.</span></div>
+      <button class="btn btn-blue" id="bannerInstall" style="padding:9px 14px;font-size:13px">설치</button>
+      <button class="close" id="bannerClose" aria-label="닫기"><svg class="i" style="width:16px;height:16px"><use href="#i-x"/></svg></button>
+    </div>
+
+    <label class="search" for="homeSearch">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input id="homeSearch" type="search" placeholder="게임 검색..." autocomplete="off">
+    </label>
+
+    <div class="chips" id="chips">
+      <button class="chip active" data-chip="all"><svg><use href="#i-fire"/></svg>전체 딜</button>
+      <button class="chip" data-chip="top"><svg><use href="#i-pad"/></svg>높은 평점</button>
+      <button class="chip" data-chip="under10"><svg><use href="#i-spark"/></svg>$10 이하</button>
+      <button class="chip" data-chip="big"><svg><use href="#i-pct"/></svg>최대 할인</button>
+    </div>
+
+    <div id="heroHolder"><div class="hero skeleton"></div></div>
+
+    <div class="section-title">인기 급상승 할인</div>
+    <div class="trend-row" id="trendRow"></div>
+
+    <div class="section-title"><span id="feedTitle">오늘의 특가</span></div>
+    <div id="feed"></div>
+    <div class="load-more" id="loadMoreWrap" hidden><button class="btn btn-ghost" id="loadMoreBtn">더 보기</button></div>
+  </section>
+
+  <!-- EXPLORE -->
+  <section class="view" id="view-explore">
+    <div class="page-head"><h1>탐색</h1><p>다음에 할 게임을 찾아보세요</p></div>
+    <label class="search" for="exploreSearch">
+      <svg class="i"><use href="#i-search"/></svg>
+      <input id="exploreSearch" type="search" placeholder="게임 이름으로 검색" autocomplete="off">
+    </label>
+    <div class="section-title"><span id="exploreTitle">오늘의 핫딜</span></div>
+    <div id="exploreList"></div>
+  </section>
+
+  <!-- WISHLIST -->
+  <section class="view" id="view-wishlist">
+    <div class="page-head">
+      <h1>내 위시리스트</h1>
+      <p><svg><use href="#i-heart"/></svg><span id="wishSub">0 추적 중인 게임</span></p>
+    </div>
+    <div class="stats">
+      <div><small>예상 절약 금액</small><b id="statSave">-</b></div>
+      <div><small>진행 중인 할인</small><b class="y" id="statActive">0</b></div>
+    </div>
+    <div class="wish-grid" id="wishGrid"></div>
+  </section>
+
+  <!-- SETTINGS -->
+  <section class="view" id="view-settings">
+    <div class="page-head"><h1>설정</h1><p>표시 방식을 바꿀 수 있어요</p></div>
+    <div class="card-block">
+      <div class="set-row">
+        <div class="l"><b>통화</b><span>가격을 어떤 통화로 볼지 골라요</span></div>
+        <div class="seg" id="currencySeg">
+          <button data-cur="KRW">₩ KRW</button><button data-cur="USD">$ USD</button><button data-cur="CAD">C$ CAD</button>
+        </div>
+      </div>
+      <div class="set-row">
+        <div class="l"><b>앱으로 쓰기</b><span>홈 화면에 추가하는 방법</span></div>
+        <button class="btn btn-blue" id="settingsInstall" style="padding:9px 14px;font-size:13px">설치 안내</button>
+      </div>
+      <div class="set-row">
+        <div class="l"><b>위시리스트 비우기</b><span>이 기기에 저장된 찜 목록을 지워요</span></div>
+        <button class="btn btn-ghost" id="clearWish" style="padding:9px 14px;font-size:13px">비우기</button>
+      </div>
+    </div>
+    <p class="credits">
+      가격은 미국 스팀 스토어 기준이며, 원화·캐나다 달러는 매일 환율로 환산한 값이에요. 실제 결제 금액과 조금 다를 수 있어요.<br>
+      딜 정보: <a href="https://www.cheapshark.com" target="_blank" rel="noopener">CheapShark</a> ·
+      가격 기록: <a href="https://isthereanydeal.com" target="_blank" rel="noopener">IsThereAnyDeal</a> ·
+      게임 정보: Steam<br>
+      위시리스트는 이 기기의 브라우저에만 저장돼요.
+    </p>
+  </section>
+</main>
+
+<nav class="bottom-nav" id="bottomNav">
+  <div class="row">
+    <button data-tab="home" class="active"><svg class="i"><use href="#i-home"/></svg>홈</button>
+    <button data-tab="explore"><svg class="i"><use href="#i-search"/></svg>탐색</button>
+    <button data-tab="wishlist"><span class="badge-dot"><svg class="i"><use href="#i-heart"/></svg><span class="count" id="navCount" hidden>0</span></span>위시리스트</button>
+    <button data-tab="settings"><svg class="i"><use href="#i-gear"/></svg>설정</button>
+  </div>
+</nav>
+
+<!-- DETAIL -->
+<div class="detail" id="detail" aria-hidden="true">
+  <div class="inner" id="detailInner"></div>
+</div>
+<div class="d-bottom" id="detailBottom" hidden></div>
+
+<!-- INSTALL MODAL -->
+<div class="modal" id="installModal" aria-hidden="true">
+  <div class="box">
+    <h3>LootDrop 앱으로 쓰기</h3>
+    <p class="sub">설치 파일 없이 홈 화면에 추가하면 앱처럼 전체 화면으로 열려요. 앱스토어 버전은 준비 중이에요.</p>
+    <div class="tabs-mini" id="osTabs">
+      <button data-os="ios" class="active">아이폰</button>
+      <button data-os="android">안드로이드</button>
+    </div>
+    <ol class="steps" id="stepsIos">
+      <li><span class="n">1</span><span>아래 <b>앱 열기</b>를 눌러 사파리나 크롬에서 LootDrop 앱을 열어요.</span></li>
+      <li><span class="n">2</span><span>화면의 <span class="kbd"><svg><use href="#i-share"/></svg>공유</span> 버튼을 눌러요. 사파리는 아래쪽, 크롬은 주소창 오른쪽에 있어요.</span></li>
+      <li><span class="n">3</span><span>메뉴를 내려서 <span class="kbd"><svg><use href="#i-plus-sq"/></svg>홈 화면에 추가</span>를 눌러요.</span></li>
+      <li><span class="n">4</span><span>홈 화면에 생긴 LootDrop 아이콘으로 열면 끝이에요.</span></li>
+    </ol>
+    <ol class="steps" id="stepsAndroid" hidden>
+      <li><span class="n">1</span><span>아래 <b>앱 열기</b>를 눌러 크롬에서 LootDrop 앱을 열어요.</span></li>
+      <li><span class="n">2</span><span>오른쪽 위 <span class="kbd"><svg><use href="#i-dots"/></svg>메뉴</span>를 눌러요.</span></li>
+      <li><span class="n">3</span><span><b>홈 화면에 추가</b> 또는 <b>앱 설치</b>를 눌러요.</span></li>
+      <li><span class="n">4</span><span>홈 화면에 생긴 LootDrop 아이콘으로 열면 끝이에요.</span></li>
+    </ol>
+    <div class="actions">
+      <a class="btn btn-blue" id="openAppLink" href="https://loot-drop-ul05qd.flutterflow.app" target="_blank" rel="noopener"><svg class="i" style="width:16px;height:16px"><use href="#i-phone"/></svg>앱 열기</a>
+      <button class="btn btn-ghost" data-close>닫기</button>
+    </div>
+    <p class="soon">아이폰 앱스토어 · 구글 플레이 출시 준비 중</p>
+  </div>
+</div>
+
+<!-- TARGET PRICE MODAL -->
+<div class="modal" id="targetModal" aria-hidden="true">
+  <div class="box">
+    <h3>목표가 설정</h3>
+    <p class="sub" id="targetSub">이 가격 이하로 내려가면 위시리스트에 표시해 드려요.</p>
+    <div class="target-input"><span id="targetSym">₩</span><input id="targetInput" inputmode="decimal" placeholder="0"></div>
+    <div class="actions">
+      <button class="btn btn-blue" id="targetSave">저장</button>
+      <button class="btn btn-ghost" data-close>취소</button>
+    </div>
+  </div>
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script>
+(function(){
+  "use strict";
+
+  /* ================= config ================= */
+  var API = "https://www.cheapshark.com/api/1.0";
+  var APP_URL = "https://loot-drop-ul05qd.flutterflow.app";
+  var FALLBACK_RATES = { USD: 1, KRW: 1380, CAD: 1.37 };
+
+  /* ================= storage (best-effort) ================= */
+  function load(key, def){
+    try { var v = localStorage.getItem("lootdrop:" + key); return v ? JSON.parse(v) : def; }
+    catch(e){ return def; }
+  }
+  function save(key, val){
+    try { localStorage.setItem("lootdrop:" + key, JSON.stringify(val)); } catch(e){}
+  }
+
+  /* ================= state ================= */
+  var state = {
+    tab: "home",
+    chip: "all",
+    feed: [], feedPage: 0, feedHasMore: true, feedLoading: false,
+    currency: load("currency", "KRW"),
+    rates: load("rates", null) || FALLBACK_RATES,
+    wish: load("wish", {}),            // dealID -> {dealID,title,thumb,salePrice,normalPrice,target,steamAppID}
+    detailID: null,
+    detailData: null,
+    historyRange: "1y",
+    history: { id: null, pts: [] },
+    targetFor: null
+  };
+
+  /* ================= helpers ================= */
+  function $(id){ return document.getElementById(id); }
+  function esc(s){ var d = document.createElement("div"); d.textContent = s == null ? "" : String(s); return d.innerHTML; }
+  function track(name, params){ try{ if(window.gtag) window.gtag("event", name, params || {}); }catch(e){} }
+  function icon(name, cls){ return '<svg class="' + (cls || "i") + '"><use href="#i-' + name + '"/></svg>'; }
+
+  function toLocal(usd){
+    var n = parseFloat(usd);
+    if(isNaN(n)) return NaN;
+    return n * (state.rates[state.currency] || 1);
+  }
+  function fmtLocal(v){
+    if(isNaN(v)) return "-";
+    if(state.currency === "KRW") return "₩" + Math.round(v).toLocaleString("ko-KR");
+    if(state.currency === "CAD") return "C$" + v.toFixed(2);
+    return "$" + v.toFixed(2);
+  }
+  function money(usd){ return fmtLocal(toLocal(usd)); }
+  function curSym(){ return state.currency === "KRW" ? "₩" : (state.currency === "CAD" ? "C$" : "$"); }
+  function pct(savings){ var n = parseFloat(savings); return isNaN(n) ? null : Math.round(n); }
+
+  function getJSON(url){
+    return fetch(url).then(function(r){ if(!r.ok) throw new Error("HTTP " + r.status); return r.json(); });
+  }
+  // Steam / ITAD block direct browser calls; route those through public CORS relays (best-effort).
+  var OWN_RELAY = "https://lootdrop-proxy.vercel.app/api/proxy?url=";
+  var RELAYS = [
+    function(u){ return OWN_RELAY + encodeURIComponent(u); },
+    function(u){ return "https://corsproxy.io/?url=" + encodeURIComponent(u); },
+    function(u){ return "https://api.allorigins.win/raw?url=" + encodeURIComponent(u); }
+  ];
+  function getJSONSmart(url, i){
+    if(i === undefined){
+      return getJSON(url).catch(function(){ return getJSONSmart(url, 0); });
+    }
+    if(i >= RELAYS.length) return Promise.reject(new Error("unreachable"));
+    return getJSON(RELAYS[i](url)).catch(function(){ return getJSONSmart(url, i + 1); });
+  }
+
+  var toastTimer;
+  function toast(msg){
+    var t = $("toast"); t.textContent = msg; t.classList.add("show");
+    clearTimeout(toastTimer); toastTimer = setTimeout(function(){ t.classList.remove("show"); }, 1800);
+  }
+
+  function isGenuine(d){
+    var s = parseFloat(d.savings), sale = parseFloat(d.salePrice), normal = parseFloat(d.normalPrice);
+    if(isNaN(s) || s < 1) return false;
+    if(!isNaN(sale) && !isNaN(normal) && sale >= normal) return false;
+    return true;
+  }
+  // CheapShark's Steam thumbs are tiny capsules; swap to the larger Steam header art when possible.
+  function bigImg(d){
+    if(d.steamAppID) return "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/" + d.steamAppID + "/header.jpg";
+    return d.thumb || "";
+  }
+  function tallImg(d){
+    if(d.steamAppID) return "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/" + d.steamAppID + "/capsule_616x353.jpg";
+    return d.thumb || "";
+  }
+  function imgFallback(img, alt){
+    if(alt && img.getAttribute("data-fallback") !== "1"){
+      img.setAttribute("data-fallback", "1"); img.src = alt; return;
+    }
+    img.onerror = null; img.classList.add("img-missing");
+  }
+  window.__ldImgFallback = imgFallback;
+
+  /* ================= exchange rates ================= */
+  function refreshRates(){
+    var stamp = load("ratesAt", 0);
+    if(Date.now() - stamp < 12 * 3600 * 1000 && load("rates", null)) return Promise.resolve();
+    return getJSON("https://api.frankfurter.dev/v1/latest?base=USD&symbols=KRW,CAD")
+      .then(function(d){
+        if(d && d.rates && d.rates.KRW){
+          state.rates = { USD: 1, KRW: d.rates.KRW, CAD: d.rates.CAD || FALLBACK_RATES.CAD };
+          save("rates", state.rates); save("ratesAt", Date.now());
+        }
+      })
+      .catch(function(){});
+  }
+
+  /* ================= navigation ================= */
+  function setTab(tab, push){
+    state.tab = tab;
+    document.querySelectorAll(".view").forEach(function(v){ v.classList.toggle("active", v.id === "view-" + tab); });
+    document.querySelectorAll("[data-tab]").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-tab") === tab); });
+    if(tab === "explore") loadExplore();
+    if(tab === "wishlist") renderWishlist(true);
+    if(tab === "settings") renderSettings();
+    if(push !== false && location.hash !== "#" + tab) history.replaceState(null, "", "#" + tab);
+    window.scrollTo(0, 0);
+  }
+  document.querySelectorAll("[data-tab]").forEach(function(b){
+    b.addEventListener("click", function(){ setTab(b.getAttribute("data-tab")); });
+  });
+  $("logo").addEventListener("click", function(){ setTab("home"); });
+  window.addEventListener("scroll", function(){ $("topbar").classList.toggle("scrolled", window.scrollY > 4); }, { passive: true });
+
+  /* ================= home ================= */
+  var CHIP_PARAMS = {
+    all:     { title: "오늘의 특가",     p: { sortBy: "Deal Rating" } },
+    top:     { title: "높은 평점 할인", p: { sortBy: "Deal Rating", steamRating: "85" } },
+    under10: { title: "$10 이하 할인",  p: { sortBy: "Deal Rating", upperPrice: "10" } },
+    big:     { title: "할인율 높은 순", p: { sortBy: "Savings", steamRating: "60" } }
+  };
+  function dealsURL(extra, pageSize, page){
+    var p = new URLSearchParams({ storeID: "1", onSale: "1", pageSize: String(pageSize), pageNumber: String(page || 0) });
+    Object.keys(extra || {}).forEach(function(k){ p.set(k, extra[k]); });
+    return API + "/deals?" + p.toString();
+  }
+
+  function loadHero(){
+    getJSON(dealsURL({ sortBy: "Deal Rating", steamRating: "80" }, 20))
+      .then(function(list){
+        var d = (list || []).filter(isGenuine).sort(function(a, b){ return parseFloat(b.savings) - parseFloat(a.savings); })[0];
+        if(!d){ $("heroHolder").innerHTML = ""; return; }
+        $("heroHolder").innerHTML =
+          '<div class="hero" data-open="' + esc(d.dealID) + '">' +
+            '<div class="txt">' +
+              '<div class="label">오늘의 최고 할인</div>' +
+              '<div class="big">' + pct(d.savings) + '% Off</div>' +
+              '<div class="name">' + esc(d.title) + '</div>' +
+              '<div class="price">' + money(d.salePrice) + ' <s style="opacity:.7">' + money(d.normalPrice) + '</s></div>' +
+            '</div>' +
+            '<div class="ic">' + icon("gauge") + '</div>' +
+          '</div>';
+      })
+      .catch(function(){ $("heroHolder").innerHTML = ""; });
+  }
+
+  function loadTrending(){
+    var row = $("trendRow");
+    row.innerHTML = new Array(3).join('<div class="trend-card skeleton"></div>') + '<div class="trend-card skeleton"></div>';
+    getJSON(dealsURL({ sortBy: "Reviews", steamRating: "75" }, 20))
+      .then(function(list){
+        var items = (list || []).filter(isGenuine).slice(0, 8);
+        if(!items.length){ row.innerHTML = '<div class="empty">지금은 표시할 딜이 없어요.</div>'; return; }
+        row.innerHTML = items.map(function(d){
+          return '<div class="trend-card" data-open="' + esc(d.dealID) + '">' +
+            '<img loading="lazy" src="' + esc(tallImg(d)) + '" onerror="__ldImgFallback(this,\'' + esc(d.thumb) + '\')" alt="">' +
+            '<div class="shade"></div>' +
+            '<span class="pill-yellow">-' + pct(d.savings) + '%</span>' +
+            '<div class="info"><div class="t">' + esc(d.title) + '</div>' +
+              '<div class="p"><span class="now">' + money(d.salePrice) + '</span><span class="old">' + money(d.normalPrice) + '</span></div>' +
+            '</div>' +
+          '</div>';
+        }).join("");
+      })
+      .catch(function(){ row.innerHTML = '<div class="error-box">인기 딜을 불러오지 못했어요.</div>'; });
+  }
+
+  function dealCardHTML(d){
+    return '<div class="deal-card" data-open="' + esc(d.dealID) + '">' +
+      '<div class="img">' +
+        '<img loading="lazy" src="' + esc(bigImg(d)) + '" onerror="__ldImgFallback(this,\'' + esc(d.thumb) + '\')" alt="">' +
+        '<div class="shade"></div>' +
+        '<span class="pill-yellow">-' + pct(d.savings) + '%</span>' +
+        '<div class="t">' + esc(d.title) + '</div>' +
+      '</div>' +
+      '<div class="row">' +
+        '<div><div class="store">Steam</div><div class="prices"><span class="price-now">' + money(d.salePrice) + '</span><span class="price-old">' + money(d.normalPrice) + '</span></div></div>' +
+        '<a class="buy" href="https://store.steampowered.com/app/' + esc(d.steamAppID) + '/" target="_blank" rel="noopener" data-stop>' + icon("cart") + '구매</a>' +
+      '</div>' +
+    '</div>';
+  }
+
+  function loadFeed(reset){
+    var cfg = CHIP_PARAMS[state.chip];
+    if(reset){
+      state.feed = []; state.feedPage = 0; state.feedHasMore = true;
+      $("feedTitle").textContent = cfg.title;
+      $("feed").innerHTML = '<div class="deal-grid">' + new Array(7).join('<div class="deal-card skeleton" style="height:230px"></div>') + '</div>';
+      $("loadMoreWrap").hidden = true;
+    }
+    if(state.feedLoading || !state.feedHasMore) return;
+    state.feedLoading = true;
+    var chipAtStart = state.chip;
+    getJSON(dealsURL(cfg.p, 24, state.feedPage))
+      .then(function(list){
+        if(chipAtStart !== state.chip) return;
+        var raw = list || [];
+        var seen = {};
+        state.feed.forEach(function(x){ seen[x.dealID] = 1; });
+        raw.filter(isGenuine).forEach(function(d){ if(!seen[d.dealID]){ state.feed.push(d); seen[d.dealID] = 1; } });
+        state.feedPage++;
+        if(raw.length < 24) state.feedHasMore = false;
+        renderFeed();
+      })
+      .catch(function(){
+        if(!state.feed.length) $("feed").innerHTML = '<div class="error-box">딜 정보를 불러오지 못했어요. 잠시 후 다시 시도해 주세요.</div>';
+      })
+      .then(function(){ state.feedLoading = false; });
+  }
+  function renderFeed(){
+    if(!state.feed.length){ $("feed").innerHTML = '<div class="empty">조건에 맞는 딜이 없어요.</div>'; $("loadMoreWrap").hidden = true; return; }
+    $("feed").innerHTML = '<div class="deal-grid">' + state.feed.map(dealCardHTML).join("") + '</div>';
+    $("loadMoreWrap").hidden = !state.feedHasMore;
+  }
+  $("loadMoreBtn").addEventListener("click", function(){ loadFeed(false); });
+
+  $("chips").addEventListener("click", function(e){
+    var b = e.target.closest("[data-chip]"); if(!b) return;
+    state.chip = b.getAttribute("data-chip");
+    document.querySelectorAll("#chips .chip").forEach(function(c){ c.classList.toggle("active", c === b); });
+    loadFeed(true);
+  });
+
+  // home search jumps to the explore tab with the query
+  $("homeSearch").addEventListener("keydown", function(e){
+    if(e.key !== "Enter") return;
+    var q = this.value.trim(); if(!q) return;
+    $("exploreSearch").value = q; this.value = ""; this.blur();
+    setTab("explore");
+  });
+
+  /* ================= explore ================= */
+  var exploreLoadedHot = false, searchTimer = null;
+  function listItemHTML(d){
+    var on = !!state.wish[d.dealID];
+    var p = pct(d.savings);
+    return '<div class="list-item" data-open="' + esc(d.dealID) + '">' +
+      '<div class="thumb"><img loading="lazy" src="' + esc(tallImg(d)) + '" onerror="__ldImgFallback(this,\'' + esc(d.thumb) + '\')" alt=""></div>' +
+      '<div class="mid">' +
+        (p ? '<div class="top"><span class="pill-pink">-' + p + '%</span></div>' : '') +
+        '<div class="name">' + esc(d.title) + '</div>' +
+        '<div class="prices"><span class="price-now">' + money(d.salePrice) + '</span>' +
+          (d.normalPrice ? '<span class="price-old">' + money(d.normalPrice) + '</span>' : '') + '</div>' +
+      '</div>' +
+      '<div class="right">' +
+        '<button class="heart' + (on ? ' active' : '') + '" data-heart="' + esc(d.dealID) + '" aria-label="찜하기">' + icon(on ? "heart" : "heart-o") + '</button>' +
+        '<span class="pill-store">Steam</span>' +
+      '</div>' +
+    '</div>';
+  }
+  var exploreItems = {};
+  function renderExploreList(items, emptyMsg){
+    items.forEach(function(d){ exploreItems[d.dealID] = d; });
+    $("exploreList").innerHTML = items.length
+      ? '<div class="list">' + items.map(listItemHTML).join("") + '</div>'
+      : '<div class="empty">' + emptyMsg + '</div>';
+  }
+  function loadExplore(){
+    var q = $("exploreSearch").value.trim();
+    if(q){ runSearch(q); return; }
+    $("exploreTitle").textContent = "오늘의 핫딜";
+    if(exploreLoadedHot && state.hotCache){ renderExploreList(state.hotCache, ""); return; }
+    $("exploreList").innerHTML = '<div class="loading-box">불러오는 중…</div>';
+    getJSON(dealsURL({ sortBy: "Savings", steamRating: "70" }, 30))
+      .then(function(list){
+        state.hotCache = (list || []).filter(isGenuine).slice(0, 12);
+        exploreLoadedHot = true;
+        if(!$("exploreSearch").value.trim()) renderExploreList(state.hotCache, "지금은 표시할 딜이 없어요.");
+      })
+      .catch(function(){ $("exploreList").innerHTML = '<div class="error-box">핫딜을 불러오지 못했어요.</div>'; });
+  }
+  function runSearch(q){
+    $("exploreTitle").textContent = '"' + q + '" 검색 결과';
+    $("exploreList").innerHTML = '<div class="loading-box">검색 중…</div>';
+    // search Steam deals first (has prices + discount), then fall back to the game index
+    getJSON(API + "/deals?" + new URLSearchParams({ storeID: "1", title: q, pageSize: "30" }).toString())
+      .then(function(list){
+        if($("exploreSearch").value.trim() !== q) return;
+        var items = (list || []).map(function(d){ if(!isGenuine(d)) d.savings = "0"; return d; });
+        renderExploreList(items, "검색 결과가 없어요. 영어 제목으로 검색해 보세요.");
+      })
+      .catch(function(){ $("exploreList").innerHTML = '<div class="error-box">검색에 실패했어요.</div>'; });
+  }
+  $("exploreSearch").addEventListener("input", function(){
+    var q = this.value.trim(); clearTimeout(searchTimer);
+    if(!q){ loadExplore(); return; }
+    searchTimer = setTimeout(function(){ runSearch(q); }, 400);
+  });
+
+  /* ================= wishlist ================= */
+  function wishCount(){ return Object.keys(state.wish).length; }
+  function updateNavCount(){
+    var n = wishCount(), c = $("navCount");
+    c.textContent = n; c.hidden = n === 0;
+  }
+  function toggleWish(d){
+    if(state.wish[d.dealID]){ delete state.wish[d.dealID]; toast("위시리스트에서 뺐어요"); }
+    else {
+      state.wish[d.dealID] = {
+        dealID: d.dealID, title: d.title || d.name, thumb: d.thumb, steamAppID: d.steamAppID || null,
+        salePrice: d.salePrice, normalPrice: d.normalPrice || d.retailPrice, target: null, addedAt: Date.now()
+      };
+      toast("위시리스트에 담았어요"); track("add_to_wishlist", { item_name: d.title || d.name });
+    }
+    save("wish", state.wish); updateNavCount();
+  }
+
+  var wishRefreshing = false;
+  function renderWishlist(refresh){
+    var items = Object.keys(state.wish).map(function(k){ return state.wish[k]; })
+      .sort(function(a, b){ return (b.addedAt || 0) - (a.addedAt || 0); });
+    $("wishSub").textContent = items.length + " 추적 중인 게임";
+
+    var saveSum = 0, active = 0;
+    items.forEach(function(w){
+      var s = parseFloat(w.salePrice), n = parseFloat(w.normalPrice);
+      if(!isNaN(s) && !isNaN(n) && n > s){ saveSum += (n - s); active++; }
+    });
+    $("statSave").textContent = items.length ? money(saveSum) : "-";
+    $("statActive").textContent = active;
+
+    if(!items.length){
+      $("wishGrid").innerHTML = '<div class="empty" style="grid-column:1/-1">아직 찜한 게임이 없어요.<br>게임 상세 화면에서 <b>찜하기</b>를 눌러 담아 보세요.</div>';
+      return;
+    }
+    $("wishGrid").innerHTML = items.map(function(w){
+      var sale = parseFloat(w.salePrice), normal = parseFloat(w.normalPrice), target = parseFloat(w.target);
+      var off = (!isNaN(sale) && !isNaN(normal) && normal > 0) ? Math.round((1 - sale / normal) * 100) : 0;
+      var status, color, progress;
+      if(isNaN(target)){
+        status = "목표 가격을 설정하세요"; color = "var(--text-dim)";
+        progress = off; // show discount depth until a target exists
+      } else if(sale <= target){
+        status = "목표가 도달 - 지금 구매하세요!"; color = "var(--yellow)"; progress = 100;
+      } else {
+        status = "목표가보다 " + money(sale - target) + " 높음"; color = "var(--text-dim)";
+        progress = normal > target ? Math.max(4, Math.min(96, Math.round((normal - sale) / (normal - target) * 100))) : 10;
+      }
+      var barColor = (!isNaN(target) && sale <= target) ? "var(--yellow)" : "var(--green)";
+      return '<div class="wish-card">' +
+        '<div class="img" data-open="' + esc(w.dealID) + '">' +
+          '<img loading="lazy" src="' + esc(bigImg(w)) + '" onerror="__ldImgFallback(this,\'' + esc(w.thumb) + '\')" alt="">' +
+          '<span class="pill-store">Steam</span>' +
+          '<span class="t">' + esc(w.title) + '</span>' +
+        '</div>' +
+        '<div class="body">' +
+          '<div class="cols">' +
+            '<div><small>목표 가격</small><span class="target" data-target="' + esc(w.dealID) + '">' + (isNaN(target) ? "설정하기" : money(target)) + icon("edit") + '</span></div>' +
+            '<div style="text-align:right"><small>현재가</small><div class="cur">' + money(sale) + (off > 0 ? '<span class="pct">-' + off + '%</span>' : '') + '</div></div>' +
+          '</div>' +
+          '<div class="status" style="color:' + color + '">' + esc(status) + '</div>' +
+          '<div class="bar"><span style="width:' + progress + '%;background:' + barColor + '"></span></div>' +
+          '<div class="actions">' +
+            '<button class="btn btn-blue" data-open="' + esc(w.dealID) + '">' + icon("ext", "i") + '할인 보기</button>' +
+            '<button class="btn btn-ghost del" data-del="' + esc(w.dealID) + '" aria-label="삭제">' + icon("trash") + '</button>' +
+          '</div>' +
+        '</div>' +
+      '</div>';
+    }).join("");
+
+    if(refresh && !wishRefreshing) refreshWishPrices(items);
+  }
+  // pull current prices for wishlisted deals (sequential, capped) so the list stays honest
+  function refreshWishPrices(items){
+    wishRefreshing = true;
+    var queue = items.slice(0, 20), changed = false;
+    function next(){
+      var w = queue.shift();
+      if(!w){ wishRefreshing = false; if(changed){ save("wish", state.wish); if(state.tab === "wishlist") renderWishlist(false); } return; }
+      getJSON(API + "/deals?id=" + w.dealID) // dealIDs arrive already URL-encoded; encoding again breaks them
+        .then(function(d){
+          var g = d && d.gameInfo; var cur = state.wish[w.dealID];
+          if(g && cur){
+            if(g.salePrice && g.salePrice !== cur.salePrice){ cur.salePrice = g.salePrice; changed = true; }
+            if(g.retailPrice) cur.normalPrice = g.retailPrice;
+            if(g.steamAppID && !cur.steamAppID){ cur.steamAppID = g.steamAppID; changed = true; }
+          }
+        })
+        .catch(function(){})
+        .then(next);
+    }
+    next();
+  }
+
+  $("wishGrid").addEventListener("click", function(e){
+    var del = e.target.closest("[data-del]");
+    if(del){ e.stopPropagation(); var id = del.getAttribute("data-del"); delete state.wish[id]; save("wish", state.wish); updateNavCount(); renderWishlist(false); toast("삭제했어요"); return; }
+    var tg = e.target.closest("[data-target]");
+    if(tg){ e.stopPropagation(); openTarget(tg.getAttribute("data-target")); }
+  });
+
+  function openTarget(id){
+    var w = state.wish[id]; if(!w) return;
+    state.targetFor = id;
+    $("targetSym").textContent = curSym();
+    $("targetSub").textContent = w.title + " — 이 가격 이하로 내려가면 위시리스트에 표시해 드려요.";
+    var t = parseFloat(w.target);
+    $("targetInput").value = isNaN(t) ? "" : (state.currency === "KRW" ? Math.round(toLocal(t)) : toLocal(t).toFixed(2));
+    openModal("targetModal");
+    setTimeout(function(){ $("targetInput").focus(); }, 120);
+  }
+  $("targetSave").addEventListener("click", function(){
+    var w = state.wish[state.targetFor]; if(!w) return closeModals();
+    var raw = $("targetInput").value.replace(/[^0-9.]/g, "");
+    var v = parseFloat(raw);
+    w.target = (isNaN(v) || v <= 0) ? null : String(v / (state.rates[state.currency] || 1)); // stored in USD
+    save("wish", state.wish); closeModals(); renderWishlist(false);
+    toast(w.target ? "목표가를 저장했어요" : "목표가를 지웠어요");
+  });
+  $("targetInput").addEventListener("keydown", function(e){ if(e.key === "Enter") $("targetSave").click(); });
+
+  /* ================= settings ================= */
+  function renderSettings(){
+    document.querySelectorAll("#currencySeg button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-cur") === state.currency); });
+  }
+  $("currencySeg").addEventListener("click", function(e){
+    var b = e.target.closest("[data-cur]"); if(!b) return;
+    state.currency = b.getAttribute("data-cur"); save("currency", state.currency);
+    renderSettings(); rerenderPrices(); toast("통화를 바꿨어요");
+  });
+  $("clearWish").addEventListener("click", function(){
+    if(!wishCount()) return toast("비어 있어요");
+    state.wish = {}; save("wish", state.wish); updateNavCount(); toast("위시리스트를 비웠어요");
+  });
+  function rerenderPrices(){
+    loadHero(); loadTrending(); renderFeed();
+    if(state.hotCache) exploreLoadedHot = true;
+  }
+
+  /* ================= detail ================= */
+  function openDetail(id){
+    state.detailID = id; state.detailData = null;
+    var det = $("detail");
+    $("detailInner").innerHTML =
+      '<div class="d-hero skeleton"><div class="tb"><button class="icon-btn" data-back>' + icon("back") + '</button></div></div>' +
+      '<div class="loading-box">불러오는 중…</div>';
+    $("detailBottom").hidden = true;
+    det.scrollTop = 0; det.classList.add("open"); det.setAttribute("aria-hidden", "false");
+    document.body.style.overflow = "hidden";
+    if(location.hash.indexOf("deal=") === -1) history.pushState({ deal: id }, "", "#deal=" + encodeURIComponent(id));
+
+    getJSON(API + "/deals?id=" + id)
+      .then(function(d){ if(state.detailID === id){ state.detailData = d; renderDetail(id, d); } })
+      .catch(function(){
+        if(state.detailID !== id) return;
+        $("detailInner").innerHTML = '<div class="d-hero"><div class="tb"><button class="icon-btn" data-back>' + icon("back") + '</button></div></div><div class="error-box">상세 정보를 불러오지 못했어요.</div>';
+      });
+  }
+  function closeDetail(fromPop){
+    state.detailID = null;
+    $("detail").classList.remove("open"); $("detail").setAttribute("aria-hidden", "true");
+    $("detailBottom").hidden = true;
+    document.body.style.overflow = "";
+    if(!fromPop && location.hash.indexOf("deal=") !== -1) history.back();
+    if(state.tab === "wishlist") renderWishlist(false);
+    if(state.tab === "explore" && state.hotCache && !$("exploreSearch").value.trim()) renderExploreList(state.hotCache, "");
+  }
+  window.addEventListener("popstate", function(){
+    if(location.hash.indexOf("deal=") === -1 && state.detailID) closeDetail(true);
+  });
+
+  function renderDetail(id, data){
+    var g = (data && data.gameInfo) || {};
+    var sale = g.salePrice, retail = g.retailPrice;
+    var off = (retail && sale) ? Math.round((1 - parseFloat(sale) / parseFloat(retail)) * 100) : 0;
+    var on = !!state.wish[id];
+    var hero = g.steamAppID ? "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/" + g.steamAppID + "/library_hero.jpg" : (g.thumb || "");
+    var heroAlt = g.steamAppID ? "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/" + g.steamAppID + "/header.jpg" : (g.thumb || "");
+    var cheapest = data && data.cheapestPriceEver;
+    var lowDate = "";
+    if(cheapest && cheapest.date){ var dd = new Date(cheapest.date * 1000); lowDate = dd.getFullYear() + "." + String(dd.getMonth() + 1).padStart(2, "0"); }
+    var storeURL = g.steamAppID ? "https://store.steampowered.com/app/" + g.steamAppID + "/" : "https://www.cheapshark.com/redirect?dealID=" + id;
+
+    $("detailInner").innerHTML =
+      '<div class="d-hero">' +
+        '<img src="' + esc(hero) + '" onerror="__ldImgFallback(this,\'' + esc(heroAlt) + '\')" alt="">' +
+        '<div class="shade"></div>' +
+        '<div class="tb"><button class="icon-btn" data-back aria-label="뒤로">' + icon("back") + '</button>' +
+          '<button class="icon-btn' + (on ? ' active' : '') + '" id="dHeart" aria-label="찜하기">' + icon(on ? "heart" : "heart-o") + '</button></div>' +
+        '<div class="info">' +
+          (g.steamRatingPercent && g.steamRatingPercent !== "0" ? '<div class="rating">' + icon("star") + esc(g.steamRatingPercent) + '%</div>' : '') +
+          '<h2>' + esc(g.name) + '</h2>' +
+          (g.publisher && g.publisher !== "N/A" ? '<div class="pub">' + esc(g.publisher) + '</div>' : '') +
+          '<div class="d-chips" id="dChips"></div>' +
+        '</div>' +
+      '</div>' +
+      '<div class="d-body"><div class="d-main">' +
+        '<div class="tiles">' +
+          '<div class="tile"><small>' + icon("thumb") + 'Steam 평가</small>' +
+            '<div class="v" style="color:var(--green)">' + (g.steamRatingPercent && g.steamRatingPercent !== "0" ? esc(g.steamRatingPercent) + "%" : "–") + '</div>' +
+            '<div class="s">' + esc(ratingKo(g.steamRatingText) || "평가 없음") + (g.steamRatingCount && g.steamRatingCount !== "0" ? " · 리뷰 " + Number(g.steamRatingCount).toLocaleString("ko-KR") + "개" : "") + '</div></div>' +
+          '<div class="tile"><small>' + icon("star") + 'Metacritic</small><div class="meta-box" id="metaBox">–</div><div class="s">평론가 점수</div></div>' +
+        '</div>' +
+        '</div><div class="d-side">' +
+        '<div class="block price-block">' +
+          '<h3><span class="l">' + icon("tag") + '가격 정보</span></h3>' +
+          '<div class="price-big"><span class="now">' + money(sale) + '</span>' +
+            (retail ? '<span class="price-old" style="font-size:14px">' + money(retail) + '</span>' : '') +
+            (off > 0 ? '<span class="save">-' + off + '%</span>' : '') + '</div>' +
+          (cheapest && cheapest.price ? '<div class="low-row"><span>역대 최저가' + (lowDate ? ' <span style="color:var(--text-dim)">(' + lowDate + ')</span>' : '') + '</span><b>' + money(cheapest.price) + '</b></div>' : '') +
+          '<a class="btn btn-blue" style="width:100%;margin-top:14px" href="' + esc(storeURL) + '" target="_blank" rel="noopener">' + icon("cart") + 'Steam에서 구매하기</a>' +
+          '<button class="btn btn-ghost side-wish' + (on ? ' on' : '') + '" id="dSideWish" style="width:100%;margin-top:10px">' + icon("heart") + (on ? '찜 완료' : '찜하기') + '</button>' +
+          '<button class="btn btn-ghost" id="dSideShare" style="width:100%;margin-top:10px">' + icon("share") + '친구에게 공유하기</button>' +
+        '</div>' +
+        '</div><div class="d-main d-main2">' +
+        '<div class="block" id="historyBlock"><h3><span class="l">' + icon("chart") + '가격 변동 그래프</span></h3><div class="loading-box" style="padding:24px 0">가격 기록을 불러오는 중…</div></div>' +
+        '<div id="steamExtra"></div>' +
+      '</div></div>';
+
+    var bottom = $("detailBottom");
+    bottom.innerHTML =
+      '<div class="row">' +
+        '<div class="cp"><small>현재 가격</small><div class="line"><span class="now">' + money(sale) + '</span>' + (off > 0 ? '<span class="save">SAVE ' + off + '%</span>' : '') + '</div></div>' +
+        '<button class="store-btn" id="dShareBtn" aria-label="공유하기">' + icon("share") + '</button>' +
+        '<a class="store-btn" id="dStoreBtn" href="' + esc(storeURL) + '" target="_blank" rel="noopener" aria-label="스팀에서 보기">' + icon("ext") + '</a>' +
+        '<button class="wish-btn' + (on ? ' on' : '') + '" id="dWishBtn">' + icon("heart") + (on ? '찜 완료' : '찜하기') + '</button>' +
+      '</div>';
+    bottom.hidden = false;
+
+    var item = { dealID: id, title: g.name, thumb: g.thumb, steamAppID: g.steamAppID, salePrice: sale, normalPrice: retail };
+    function syncWish(){
+      var now = !!state.wish[id];
+      var h = $("dHeart"); if(h){ h.classList.toggle("active", now); h.innerHTML = icon(now ? "heart" : "heart-o"); }
+      var b = $("dWishBtn"); if(b){ b.classList.toggle("on", now); b.innerHTML = icon("heart") + (now ? "찜 완료" : "찜하기"); }
+      var sw = $("dSideWish"); if(sw){ sw.classList.toggle("on", now); sw.innerHTML = icon("heart") + (now ? "찜 완료" : "찜하기"); }
+    }
+    $("dHeart").addEventListener("click", function(){ toggleWish(item); syncWish(); });
+    $("dWishBtn").addEventListener("click", function(){ toggleWish(item); syncWish(); });
+    $("dSideWish").addEventListener("click", function(){ toggleWish(item); syncWish(); });
+    function shareDeal(){
+      var url = location.origin + "/#deal=" + encodeURIComponent(id);
+      var lines = [(g.name || "이 게임") + (off > 0 ? " " + off + "% 할인 중!" : "")];
+      lines.push("지금 " + money(sale) + (retail && off > 0 ? " (정가 " + money(retail) + ")" : ""));
+      if(cheapest && cheapest.price) lines.push("역대 최저가 " + money(cheapest.price));
+      lines.push("LootDrop에서 보기 👇");
+      var text = lines.join("\n");
+      track("share", { method: navigator.share ? "native" : "copy", item_name: g.name });
+      if(navigator.share){
+        navigator.share({ title: (g.name || "LootDrop") + " 할인 정보", text: text, url: url }).catch(function(){});
+      } else {
+        var full = text + "\n" + url;
+        (navigator.clipboard ? navigator.clipboard.writeText(full) : Promise.reject())
+          .then(function(){ toast("링크를 복사했어요. 카톡에 붙여넣기 해보세요"); })
+          .catch(function(){ window.prompt("이 내용을 복사해서 공유하세요", full); });
+      }
+    }
+    $("dShareBtn").addEventListener("click", shareDeal);
+    $("dSideShare").addEventListener("click", shareDeal);
+    document.querySelectorAll("#detailInner a.btn-blue, #dStoreBtn").forEach(function(a){ a.addEventListener("click", function(){ track("steam_click", { item_name: g.name }); }); });
+    track("view_item", { item_name: g.name, discount: off });
+
+    if(g.steamAppID){ loadHistory(g.steamAppID, id); loadSteamExtra(g.steamAppID, id); }
+    else { $("historyBlock").remove(); }
+  }
+
+  function ratingKo(en){
+    var m = {
+      "Overwhelmingly Positive": "압도적으로 긍정적", "Very Positive": "매우 긍정적", "Positive": "긍정적",
+      "Mostly Positive": "대체로 긍정적", "Mixed": "복합적", "Mostly Negative": "대체로 부정적",
+      "Negative": "부정적", "Very Negative": "매우 부정적", "Overwhelmingly Negative": "압도적으로 부정적"
+    };
+    return en ? (m[en] || en) : "";
+  }
+
+  /* ---- Steam extras: description, genres, screenshots, metacritic ---- */
+  function loadSteamExtra(appID, id){
+    getJSONSmart("https://store.steampowered.com/api/appdetails?appids=" + encodeURIComponent(appID) + "&l=korean")
+      .then(function(res){
+        if(state.detailID !== id) return;
+        var e = res && res[appID]; if(!e || !e.success || !e.data) return;
+        var d = e.data;
+        if(d.metacritic && d.metacritic.score){
+          var mb = $("metaBox"); var s = d.metacritic.score;
+          if(mb){ mb.textContent = s; mb.style.background = s >= 75 ? "var(--green)" : (s >= 50 ? "#EAB308" : "#EF4444"); mb.style.color = s >= 50 && s < 75 ? "#111" : "#fff"; }
+        }
+        var genres = (d.genres || []).map(function(x){ return '<span>' + esc(x.description) + '</span>'; }).join("");
+        var shots = (d.screenshots || []).slice(0, 8).map(function(s){
+          return '<a href="' + esc(s.path_full) + '" target="_blank" rel="noopener"><img loading="lazy" src="' + esc(s.path_thumbnail) + '" alt=""></a>';
+        }).join("");
+        var html = "";
+        if(d.short_description || genres){
+          html += '<div class="block"><h3><span class="l">' + icon("info") + '게임 소개</span></h3>' +
+            (genres ? '<div class="genres">' + genres + '</div>' : '') +
+            (d.short_description ? '<p class="desc">' + esc(d.short_description) + '</p>' : '') +
+            (d.developers && d.developers.length ? '<p class="desc" style="color:var(--text-dim);margin-top:8px;font-size:12px">개발사: ' + esc(d.developers.join(", ")) + '</p>' : '') +
+          '</div>';
+        }
+        if(shots) html += '<div class="block"><h3><span class="l">' + icon("spark") + '스크린샷</span></h3><div class="shots">' + shots + '</div></div>';
+        html += '<div id="reviewsHolder" style="display:contents"></div>';
+        var holder = $("steamExtra"); if(holder){ holder.innerHTML = html; holder.style.display = "contents"; }
+        // release date + platforms as small chips under the title
+        var chips = [];
+        if(d.release_date && d.release_date.date) chips.push("출시 " + d.release_date.date);
+        if(d.platforms){ var pf = []; if(d.platforms.windows) pf.push("Windows"); if(d.platforms.mac) pf.push("macOS"); if(d.platforms.linux) pf.push("Linux"); if(pf.length) chips.push(pf.join(" · ")); }
+        if(d.supported_languages && /한국어|Korean/i.test(d.supported_languages)) chips.push("한국어 지원");
+        var cr = $("dChips"); if(cr && chips.length) cr.innerHTML = chips.map(function(c){ return '<span>' + esc(c) + '</span>'; }).join("");
+        loadReviews(appID, id);
+      })
+      .catch(function(){});
+  }
+
+  /* ---- Steam user reviews (Korean first, English fallback) ---- */
+  function loadReviews(appID, id){
+    function fetchLang(lang){
+      return getJSONSmart("https://store.steampowered.com/appreviews/" + encodeURIComponent(appID) +
+        "?json=1&filter=all&language=" + lang + "&num_per_page=6&purchase_type=all");
+    }
+    fetchLang("koreana")
+      .then(function(r){ return (r && r.reviews && r.reviews.length >= 2) ? r : fetchLang("english"); })
+      .then(function(r){
+        if(state.detailID !== id) return;
+        var list = (r && r.reviews) || [];
+        var holder = $("reviewsHolder"); if(!holder || !list.length) return;
+        holder.innerHTML = '<div class="block"><h3><span class="l">' + icon("thumb") + '유저 리뷰</span></h3>' +
+          '<div class="reviews">' + list.slice(0, 6).map(function(rv){
+            var up = rv.voted_up;
+            var hrs = rv.author && rv.author.playtime_forever ? Math.round(rv.author.playtime_forever / 60) : 0;
+            var txt = (rv.review || "").replace(/\[\/?[a-z0-9=*]+\]/gi, "").trim();
+            var long = txt.length > 220;
+            return '<div class="review">' +
+              '<div class="rv-top"><span class="rv-badge ' + (up ? "up" : "down") + '">' + icon("thumb") + (up ? "추천" : "비추천") + '</span>' +
+                (hrs ? '<span class="rv-hrs">플레이 ' + hrs.toLocaleString("ko-KR") + '시간</span>' : '') + '</div>' +
+              '<p class="rv-text' + (long ? ' clamp' : '') + '">' + esc(txt) + '</p>' +
+              (long ? '<button class="rv-more" data-more>더 보기</button>' : '') +
+            '</div>';
+          }).join("") + '</div>' +
+          '<a class="btn btn-ghost" style="width:100%;margin-top:12px" href="https://store.steampowered.com/app/' + esc(appID) + '/#app_reviews_hash" target="_blank" rel="noopener">스팀에서 리뷰 전체 보기</a>' +
+        '</div>';
+      })
+      .catch(function(){});
+  }
+
+  /* ---- price history (IsThereAnyDeal) ---- */
+  var RANGES = { all: ["전체 기간", null], "1y": ["최근 1년", 365], "6m": ["최근 6개월", 182], "3m": ["최근 3개월", 91] };
+  function loadHistory(appID, id){
+    var base = "https://api.isthereanydeal.com";
+    var block = $("historyBlock");
+    function fail(msg){ if(state.detailID !== id || !$("historyBlock")) return; $("historyBlock").innerHTML = '<h3><span class="l">' + icon("chart") + '가격 변동 그래프</span></h3><div class="note">' + msg + '</div>'; }
+    // The IsThereAnyDeal key lives on the LootDrop relay server (never in this public page),
+    // so these calls go through our own relay, which adds the key on its side.
+    function itad(u){ return getJSON(OWN_RELAY + encodeURIComponent(u)); }
+    itad(base + "/games/lookup/v1?appid=" + encodeURIComponent(appID))
+      .then(function(look){
+        var gid = look && look.found && look.game && look.game.id;
+        if(!gid) throw new Error("none");
+        return itad(base + "/games/history/v2?id=" + encodeURIComponent(gid) + "&country=US&shops=61&since=2015-01-01T00:00:00Z");
+      })
+      .then(function(hist){
+        if(state.detailID !== id) return;
+        var pts = (Array.isArray(hist) ? hist : []).map(function(ev){
+          return { t: new Date(ev.timestamp).getTime(), p: ev.deal && ev.deal.price ? parseFloat(ev.deal.price.amount) : NaN };
+        }).filter(function(x){ return !isNaN(x.t) && !isNaN(x.p); }).sort(function(a, b){ return a.t - b.t; });
+        if(pts.length < 2){ fail("아직 가격 변동 기록이 없어요."); return; }
+        state.history = { id: id, pts: pts };
+        drawHistory(id);
+      })
+      .catch(function(err){
+        // relay without a key answers 401/403 — just hide the chart quietly in that case
+        if(err && /HTTP 40[13]/.test(err.message)){ var b = $("historyBlock"); if(b && state.detailID === id) b.remove(); return; }
+        fail("가격 기록을 불러오지 못했어요.");
+      });
+  }
+  function drawHistory(id){
+    var block = $("historyBlock"); if(!block || state.history.id !== id) return;
+    var all = state.history.pts, r = RANGES[state.historyRange] || RANGES.all, pts = all;
+    if(r[1]){
+      var cut = Date.now() - r[1] * 864e5;
+      pts = all.filter(function(x){ return x.t >= cut; });
+      // carry the last known price into the window so the line starts at the left edge
+      var before = all.filter(function(x){ return x.t < cut; }).pop();
+      if(before) pts.unshift({ t: cut, p: before.p });
+      if(pts.length < 2) pts = all;
+    }
+    // extend to "now" with the latest price so the chart reads up to today
+    var last = pts[pts.length - 1];
+    if(Date.now() - last.t > 864e5) pts = pts.concat([{ t: Date.now(), p: last.p }]);
+
+    var W = 600, H = 190, ML = 54, MR = 12, MT = 18, MB = 26, pw = W - ML - MR, ph = H - MT - MB;
+    var minT = pts[0].t, maxT = pts[pts.length - 1].t, minP = Infinity, maxP = -Infinity;
+    pts.forEach(function(x){ minP = Math.min(minP, x.p); maxP = Math.max(maxP, x.p); });
+    if(minP === maxP){ minP = Math.max(0, minP - 1); maxP += 1; }
+    var pad = (maxP - minP) * 0.12; minP = Math.max(0, minP - pad); maxP += pad;
+    function X(t){ return ML + (t - minT) / ((maxT - minT) || 1) * pw; }
+    function Y(p){ return MT + (1 - (p - minP) / ((maxP - minP) || 1)) * ph; }
+
+    // step line: a price holds until the next change
+    var d = "M" + X(pts[0].t).toFixed(1) + "," + Y(pts[0].p).toFixed(1);
+    for(var i = 1; i < pts.length; i++){
+      d += " H" + X(pts[i].t).toFixed(1) + " V" + Y(pts[i].p).toFixed(1);
+    }
+    var area = d + " V" + (MT + ph) + " H" + X(pts[0].t).toFixed(1) + " Z";
+    var low = pts.reduce(function(a, b){ return b.p < a.p ? b : a; });
+    function fd(ms){ var x = new Date(ms); return x.getFullYear() + "." + String(x.getMonth() + 1).padStart(2, "0"); }
+    var lx = X(low.t), anchor = lx < ML + 60 ? "start" : (lx > W - MR - 60 ? "end" : "middle");
+
+    var svg = '<svg class="chart" viewBox="0 0 ' + W + ' ' + H + '" role="img" aria-label="가격 변동 그래프">' +
+      '<defs><linearGradient id="hg" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="#1F6BFF" stop-opacity=".35"/><stop offset="1" stop-color="#1F6BFF" stop-opacity="0"/></linearGradient></defs>' +
+      '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + MT + '" y2="' + MT + '" stroke="#262632"/>' +
+      '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + (MT + ph / 2) + '" y2="' + (MT + ph / 2) + '" stroke="#1d1d27"/>' +
+      '<line x1="' + ML + '" x2="' + (ML + pw) + '" y1="' + (MT + ph) + '" y2="' + (MT + ph) + '" stroke="#262632"/>' +
+      '<text x="' + (ML - 8) + '" y="' + (MT + 4) + '" text-anchor="end" font-size="11" fill="#9A9CB0">' + esc(money(maxP)) + '</text>' +
+      '<text x="' + (ML - 8) + '" y="' + (MT + ph + 4) + '" text-anchor="end" font-size="11" fill="#9A9CB0">' + esc(money(minP)) + '</text>' +
+      '<path d="' + area + '" fill="url(#hg)"/>' +
+      '<path d="' + d + '" fill="none" stroke="#1F6BFF" stroke-width="2.5" stroke-linejoin="round"/>' +
+      '<circle cx="' + lx.toFixed(1) + '" cy="' + Y(low.p).toFixed(1) + '" r="5" fill="#FFE11A" stroke="#15151C" stroke-width="2"/>' +
+      '<text x="' + lx.toFixed(1) + '" y="' + (Y(low.p) - 10).toFixed(1) + '" text-anchor="' + anchor + '" font-size="11" font-weight="700" fill="#FFE11A">최저 ' + esc(money(low.p)) + '</text>' +
+      '<text x="' + ML + '" y="' + (H - 6) + '" font-size="11" fill="#9A9CB0">' + fd(minT) + '</text>' +
+      '<text x="' + (ML + pw) + '" y="' + (H - 6) + '" text-anchor="end" font-size="11" fill="#9A9CB0">' + fd(maxT) + '</text>' +
+      '</svg>';
+    var opts = Object.keys(RANGES).map(function(k){ return '<option value="' + k + '"' + (k === state.historyRange ? ' selected' : '') + '>' + RANGES[k][0] + '</option>'; }).join("");
+    block.innerHTML = '<h3><span class="l">' + icon("chart") + '가격 변동 그래프</span><select class="range-select" id="rangeSel">' + opts + '</select></h3>' + svg +
+      '<div class="chart-note">스팀 가격 기록 기준 · 자료: IsThereAnyDeal</div>';
+    $("rangeSel").addEventListener("change", function(){ state.historyRange = this.value; drawHistory(id); });
+  }
+
+  /* ================= global click delegation ================= */
+  document.addEventListener("click", function(e){
+    if(e.target.closest("[data-stop]")) return; // links like "구매" handle themselves
+    var more = e.target.closest("[data-more]");
+    if(more){ var t = more.previousElementSibling; if(t) t.classList.remove("clamp"); more.remove(); return; }
+    var back = e.target.closest("[data-back]");
+    if(back){ closeDetail(false); return; }
+    var heart = e.target.closest("[data-heart]");
+    if(heart){
+      e.stopPropagation();
+      var hid = heart.getAttribute("data-heart");
+      var src = exploreItems[hid] || state.feed.filter(function(x){ return x.dealID === hid; })[0];
+      if(src){ toggleWish(src); var on = !!state.wish[hid]; heart.classList.toggle("active", on); heart.innerHTML = icon(on ? "heart" : "heart-o"); }
+      return;
+    }
+    var open = e.target.closest("[data-open]");
+    if(open){ openDetail(open.getAttribute("data-open")); return; }
+    if(e.target.closest("[data-close]") || e.target.classList.contains("modal")) closeModals();
+  });
+  document.addEventListener("keydown", function(e){
+    if(e.key !== "Escape") return;
+    if(document.querySelector(".modal.open")) closeModals();
+    else if(state.detailID) closeDetail(false);
+  });
+
+  /* ================= modals / install ================= */
+  function openModal(id){ var m = $(id); m.classList.add("open"); m.setAttribute("aria-hidden", "false"); }
+  function closeModals(){ document.querySelectorAll(".modal.open").forEach(function(m){ m.classList.remove("open"); m.setAttribute("aria-hidden", "true"); }); }
+  function isAndroid(){ return /android/i.test(navigator.userAgent); }
+  function showOS(os){
+    document.querySelectorAll("#osTabs button").forEach(function(b){ b.classList.toggle("active", b.getAttribute("data-os") === os); });
+    $("stepsIos").hidden = os !== "ios"; $("stepsAndroid").hidden = os !== "android";
+  }
+  function openInstall(){ track("install_guide_open"); showOS(isAndroid() ? "android" : "ios"); openModal("installModal"); }
+  $("osTabs").addEventListener("click", function(e){ var b = e.target.closest("[data-os]"); if(b) showOS(b.getAttribute("data-os")); });
+  ["getAppTop", "bannerInstall", "settingsInstall"].forEach(function(id){ $(id).addEventListener("click", openInstall); });
+  $("openAppLink").href = APP_URL;
+  if(!load("bannerClosed", false)) $("installBanner").hidden = false;
+  $("bannerClose").addEventListener("click", function(){ $("installBanner").hidden = true; save("bannerClosed", true); });
+
+  /* ================= boot ================= */
+  updateNavCount();
+  var startHash = (location.hash || "").replace("#", "");
+  var startTab = ["home", "explore", "wishlist", "settings"].indexOf(startHash) >= 0 ? startHash : "home";
+  refreshRates().then(function(){
+    loadHero(); loadTrending(); loadFeed(true);
+    setTab(startTab, false);
+    var m = startHash.match(/^deal=(.+)$/);
+    if(m){ history.replaceState(null, "", "#home"); openDetail(decodeURIComponent(m[1])); }
+  });
+})();
+</script>
+</body>
+</html>
+<script async src="/.netlify/scripts/hud?variant=public" data-nf-variant="public" data-netlify-site-id="4f32b6e1-0fed-40d0-b6b4-5a1589e89b2c" data-app-host="app.netlify.com"></script>
