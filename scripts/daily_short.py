@@ -140,7 +140,7 @@ def render(g, art, today, out_mp4, out_cover):
     n = int(dur * FPS)
     cover = bg.copy().convert("RGBA"); cover.alpha_composite(card, (60, 520))
     text_c(cover, 220, hook1, f(90, True), WHITE); text_c(cover, 340, hook2, f(74, True), YEL)
-    cover.alpha_composite(st, (W - st.width - 20, 380))
+    cover.alpha_composite(st, (W - st.width - 30, 1440))
     cover.convert("RGB").save(out_cover, quality=92)
 
     def frame(i):
