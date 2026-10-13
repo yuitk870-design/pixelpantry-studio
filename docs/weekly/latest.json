@@ -1,7 +1,7 @@
 {
- "date": "2026-10-09",
- "video": "weekly/2026-10-09.mp4",
- "cover": "weekly/2026-10-09.jpg",
+ "date": "2026-10-14",
+ "video": "weekly/2026-10-14.mp4",
+ "cover": "weekly/2026-10-14.jpg",
  "duration": 17.5,
  "deals": [
   {
@@ -14,6 +14,24 @@
    "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1174180/capsule_616x353.jpg"
   },
   {
+   "id": 376282,
+   "name": "Halo: The Master Chief Collection",
+   "off": 75,
+   "sale": 12470.0,
+   "orig": 49900.0,
+   "store": "https://store.steampowered.com/app/376282/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/376282/capsule_616x353.jpg"
+  },
+  {
+   "id": 1091500,
+   "name": "Cyberpunk 2077",
+   "off": 70,
+   "sale": 19800.0,
+   "orig": 66000.0,
+   "store": "https://store.steampowered.com/app/1091500/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1091500/capsule_616x353.jpg"
+  },
+  {
    "id": 3240220,
    "name": "Grand Theft Auto V 인핸스드",
    "off": 56,
@@ -23,15 +41,6 @@
    "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3240220/capsule_616x353.jpg"
   },
   {
-   "id": 814380,
-   "name": "Sekiro™: Shadows Die Twice - GOTY Edition",
-   "off": 50,
-   "sale": 37500.0,
-   "orig": 75000.0,
-   "store": "https://store.steampowered.com/app/814380/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/814380/capsule_616x353.jpg"
-  },
-  {
    "id": 1808500,
    "name": "ARC Raiders",
    "off": 50,
@@ -39,15 +48,6 @@
    "orig": 60900.0,
    "store": "https://store.steampowered.com/app/1808500/",
    "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1808500/capsule_616x353.jpg"
-  },
-  {
-   "id": 1868140,
-   "name": "데이브 더 다이버",
-   "off": 50,
-   "sale": 12000.0,
-   "orig": 24000.0,
-   "store": "https://store.steampowered.com/app/1868140/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1868140/capsule_616x353.jpg"
   }
  ]
 }
