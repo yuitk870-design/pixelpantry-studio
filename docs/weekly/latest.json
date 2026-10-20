@@ -1,9 +1,18 @@
 {
- "date": "2026-10-14",
- "video": "weekly/2026-10-14.mp4",
- "cover": "weekly/2026-10-14.jpg",
+ "date": "2026-10-21",
+ "video": "weekly/2026-10-21.mp4",
+ "cover": "weekly/2026-10-21.jpg",
  "duration": 17.5,
  "deals": [
+  {
+   "id": 990080,
+   "name": "호그와트 레거시",
+   "off": 90,
+   "sale": 7980.0,
+   "orig": 79800.0,
+   "store": "https://store.steampowered.com/app/990080/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/990080/capsule_616x353.jpg"
+  },
   {
    "id": 1174180,
    "name": "Red Dead Redemption 2",
@@ -12,15 +21,6 @@
    "orig": 73000.0,
    "store": "https://store.steampowered.com/app/1174180/",
    "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1174180/capsule_616x353.jpg"
-  },
-  {
-   "id": 376282,
-   "name": "Halo: The Master Chief Collection",
-   "off": 75,
-   "sale": 12470.0,
-   "orig": 49900.0,
-   "store": "https://store.steampowered.com/app/376282/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/376282/capsule_616x353.jpg"
   },
   {
    "id": 1091500,
@@ -32,22 +32,22 @@
    "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1091500/capsule_616x353.jpg"
   },
   {
-   "id": 3240220,
-   "name": "Grand Theft Auto V 인핸스드",
-   "off": 56,
-   "sale": 24200.0,
-   "orig": 55000.0,
-   "store": "https://store.steampowered.com/app/3240220/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3240220/capsule_616x353.jpg"
+   "id": 381210,
+   "name": "Dead by Daylight",
+   "off": 60,
+   "sale": 8600.0,
+   "orig": 21500.0,
+   "store": "https://store.steampowered.com/app/381210/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/381210/capsule_616x353.jpg"
   },
   {
-   "id": 1808500,
-   "name": "ARC Raiders",
-   "off": 50,
-   "sale": 30450.0,
-   "orig": 60900.0,
-   "store": "https://store.steampowered.com/app/1808500/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1808500/capsule_616x353.jpg"
+   "id": 2138330,
+   "name": "사이버펑크 2077: 팬텀 리버티",
+   "off": 40,
+   "sale": 20940.0,
+   "orig": 34900.0,
+   "store": "https://store.steampowered.com/app/2138330/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2138330/capsule_616x353.jpg"
   }
  ]
 }
