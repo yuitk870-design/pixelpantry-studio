@@ -1,0 +1,44 @@
+{
+ "date": "2026-10-28",
+ "video": "weekly/2026-10-28.mp4",
+ "cover": "weekly/2026-10-28.jpg",
+ "duration": 15.2,
+ "deals": [
+  {
+   "id": 1326470,
+   "name": "Sons Of The Forest",
+   "off": 72,
+   "sale": 8960.0,
+   "orig": 32000.0,
+   "store": "https://store.steampowered.com/app/1326470/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1326470/capsule_616x353.jpg"
+  },
+  {
+   "id": 3240220,
+   "name": "Grand Theft Auto V 인핸스드",
+   "off": 50,
+   "sale": 18390.0,
+   "orig": 36790.0,
+   "store": "https://store.steampowered.com/app/3240220/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3240220/capsule_616x353.jpg"
+  },
+  {
+   "id": 251570,
+   "name": "7 Days to Die",
+   "off": 45,
+   "sale": 25850.0,
+   "orig": 47000.0,
+   "store": "https://store.steampowered.com/app/251570/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/251570/capsule_616x353.jpg"
+  },
+  {
+   "id": 3764200,
+   "name": "BIOHAZARD requiem",
+   "off": 30,
+   "sale": 55860.0,
+   "orig": 79800.0,
+   "store": "https://store.steampowered.com/app/3764200/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3764200/capsule_616x353.jpg"
+  }
+ ]
+}
