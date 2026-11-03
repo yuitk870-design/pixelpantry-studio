@@ -1,0 +1,53 @@
+{
+ "date": "2026-11-04",
+ "video": "weekly/2026-11-04.mp4",
+ "cover": "weekly/2026-11-04.jpg",
+ "duration": 17.5,
+ "deals": [
+  {
+   "id": 3240220,
+   "name": "Grand Theft Auto V 인핸스드",
+   "off": 50,
+   "sale": 18390.0,
+   "orig": 36790.0,
+   "store": "https://store.steampowered.com/app/3240220/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3240220/capsule_616x353.jpg"
+  },
+  {
+   "id": 3768760,
+   "name": "007 퍼스트 라이트",
+   "off": 40,
+   "sale": 53400.0,
+   "orig": 89000.0,
+   "store": "https://store.steampowered.com/app/3768760/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3768760/capsule_616x353.jpg"
+  },
+  {
+   "id": 3527290,
+   "name": "PEAK",
+   "off": 38,
+   "sale": 5210.0,
+   "orig": 8400.0,
+   "store": "https://store.steampowered.com/app/3527290/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3527290/capsule_616x353.jpg"
+  },
+  {
+   "id": 3241660,
+   "name": "R.E.P.O.",
+   "off": 35,
+   "sale": 6950.0,
+   "orig": 10700.0,
+   "store": "https://store.steampowered.com/app/3241660/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/3241660/capsule_616x353.jpg"
+  },
+  {
+   "id": 648800,
+   "name": "Raft",
+   "off": 33,
+   "sale": 14070.0,
+   "orig": 21000.0,
+   "store": "https://store.steampowered.com/app/648800/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/648800/capsule_616x353.jpg"
+  }
+ ]
+}
