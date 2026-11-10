@@ -1,0 +1,35 @@
+{
+ "date": "2026-11-11",
+ "video": "weekly/2026-11-11.mp4",
+ "cover": "weekly/2026-11-11.jpg",
+ "duration": 12.9,
+ "deals": [
+  {
+   "id": 1211600,
+   "name": "ZED ZONE",
+   "off": 40,
+   "sale": 8100.0,
+   "orig": 13500.0,
+   "store": "https://store.steampowered.com/app/1211600/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211600/capsule_616x353.jpg"
+  },
+  {
+   "id": 4618570,
+   "name": "부스터 팩 히어로즈",
+   "off": 30,
+   "sale": 7700.0,
+   "orig": 11000.0,
+   "store": "https://store.steampowered.com/app/4618570/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4618570/capsule_616x353.jpg"
+  },
+  {
+   "id": 4876650,
+   "name": "절대 색으로 분류하지 마",
+   "off": 20,
+   "sale": 8800.0,
+   "orig": 11000.0,
+   "store": "https://store.steampowered.com/app/4876650/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4876650/capsule_616x353.jpg"
+  }
+ ]
+}
