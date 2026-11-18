@@ -1,35 +1,53 @@
 {
- "date": "2026-11-11",
- "video": "weekly/2026-11-11.mp4",
- "cover": "weekly/2026-11-11.jpg",
- "duration": 12.9,
+ "date": "2026-11-18",
+ "video": "weekly/2026-11-18.mp4",
+ "cover": "weekly/2026-11-18.jpg",
+ "duration": 17.5,
  "deals": [
   {
-   "id": 1211600,
-   "name": "ZED ZONE",
-   "off": 40,
-   "sale": 8100.0,
-   "orig": 13500.0,
-   "store": "https://store.steampowered.com/app/1211600/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1211600/capsule_616x353.jpg"
+   "id": 1687950,
+   "name": "페르소나 5 더 로열",
+   "off": 70,
+   "sale": 20940.0,
+   "orig": 69800.0,
+   "store": "https://store.steampowered.com/app/1687950/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1687950/capsule_616x353.jpg"
   },
   {
-   "id": 4618570,
-   "name": "부스터 팩 히어로즈",
-   "off": 30,
-   "sale": 7700.0,
-   "orig": 11000.0,
-   "store": "https://store.steampowered.com/app/4618570/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4618570/capsule_616x353.jpg"
+   "id": 1771300,
+   "name": "Kingdom Come: Deliverance II",
+   "off": 67,
+   "sale": 20060.0,
+   "orig": 60800.0,
+   "store": "https://store.steampowered.com/app/1771300/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1771300/capsule_616x353.jpg"
   },
   {
-   "id": 4876650,
-   "name": "절대 색으로 분류하지 마",
-   "off": 20,
-   "sale": 8800.0,
-   "orig": 11000.0,
-   "store": "https://store.steampowered.com/app/4876650/",
-   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/4876650/capsule_616x353.jpg"
+   "id": 2161700,
+   "name": "페르소나3 리로드",
+   "off": 65,
+   "sale": 24430.0,
+   "orig": 69800.0,
+   "store": "https://store.steampowered.com/app/2161700/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2161700/capsule_616x353.jpg"
+  },
+  {
+   "id": 1627720,
+   "name": "P의 거짓 (Lies of P)",
+   "off": 50,
+   "sale": 32400.0,
+   "orig": 64800.0,
+   "store": "https://store.steampowered.com/app/1627720/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/1627720/capsule_616x353.jpg"
+  },
+  {
+   "id": 2536520,
+   "name": "디아블로 II 레저렉션 - 지옥불 에디션",
+   "off": 35,
+   "sale": 29180.0,
+   "orig": 44900.0,
+   "store": "https://store.steampowered.com/app/2536520/",
+   "capsule": "https://shared.akamai.steamstatic.com/store_item_assets/steam/apps/2536520/capsule_616x353.jpg"
   }
  ]
 }
