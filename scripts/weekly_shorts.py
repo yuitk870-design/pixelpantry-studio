@@ -1,4 +1,4 @@
-"""Weekly 'Steam deals TOP 5' shorts for LootDrop (Pixel Pantry).
+"""Weekly 'Steam deals TOP 5' shorts for 픽셀팬트리 | 스팀 특가·추천 (Pixel Pantry).
 Runs on GitHub Actions: fetches real Steam KR deals, downloads game art,
 renders a 1080x1920 video with original chiptune audio, writes to docs/weekly/.
 """
@@ -20,7 +20,7 @@ f = lambda s, k=False: ImageFont.truetype(FONT_K if k else FONT_B, s)
 BG = (10, 10, 15); PINK = (255, 45, 135); BLUE = (41, 121, 255); YEL = (255, 214, 10)
 WHITE = (255, 255, 255); GRAY = (160, 160, 180); GREEN = (34, 197, 94)
 UA = {"User-Agent": "Mozilla/5.0 (PixelPantry weekly shorts)"}
-SITE = "lootdrop-deals.vercel.app"
+CHANNEL = "@pixelpantryhq"
 
 
 def won(v):
@@ -105,13 +105,13 @@ def build_bg():
 def brand(img, a):
     fnt = f(150, True)
     tmp = Image.new("RGBA", (1100, 260), (0, 0, 0, 0)); td = ImageDraw.Draw(tmp)
-    tw = td.textlength("LOOTDROP", font=fnt)
-    td.text(((1100 - tw) / 2, 0), "LOOTDROP", font=fnt, fill=BLUE + (int(255 * a),))
+    tw = td.textlength("픽셀팬트리", font=fnt)
+    td.text(((1100 - tw) / 2, 0), "픽셀팬트리", font=fnt, fill=BLUE + (int(255 * a),))
     tmp = tmp.transform(tmp.size, Image.AFFINE, (1, 0.22, -40, 0, 1, 0), Image.BICUBIC)
     img.alpha_composite(tmp, (int((W - 1100) / 2), 690))
     logo = Image.open(os.path.join(ROOT, "assets", "logo.png")).convert("RGBA").resize((110, 110), Image.NEAREST)
     m = rr_mask(110, 110, 55); logo.putalpha(Image.eval(m, lambda v: int(v * a)))
-    d = ImageDraw.Draw(img); fb = f(52, True); s = "by Pixel Pantry"; w = d.textlength(s, font=fb)
+    d = ImageDraw.Draw(img); fb = f(52, True); s = "스팀 특가·추천"; w = d.textlength(s, font=fb)
     x0 = (W - (110 + 18 + w)) / 2
     img.alpha_composite(logo, (int(x0), 960))
     text_c(img, 960 + (110 - 75) / 2, s, fb, WHITE, a, x=x0 + 128)
@@ -173,7 +173,7 @@ def render(deals, arts, date_str, out_mp4, out_cover):
         if t_cards0 <= t < t_cards0 + T_CARD * len(cards) + 0.4:
             k = min(len(cards) - 1, int((t - t_cards0) // T_CARD)); lt = t - t_cards0 - k * T_CARD
             text_c(img, 150, "이번 주 스팀 할인", f(64, True), WHITE)
-            text_c(img, 240, "LootDrop · by Pixel Pantry", f(36, True), (150, 170, 230))
+            text_c(img, 240, "픽셀팬트리 · 매주 수요일 TOP 5", f(36, True), (150, 170, 230))
             p = ease(lt / 0.45)
             x = int(60 + (1 - p) * W)
             if k > 0 and lt < 0.45:
@@ -190,17 +190,18 @@ def render(deals, arts, date_str, out_mp4, out_cover):
         to = t_cards0 + T_CARD * len(cards)
         if t >= to:
             a = ease((t - to) / 0.5)
-            text_c(img, 640, "더 많은 할인은", f(80, True), WHITE, a)
-            text_c(img, 750, "LootDrop에서", f(100, True), YEL, a)
+            text_c(img, 640, "매주 수요일 TOP 5", f(80, True), WHITE, a)
+            text_c(img, 750, "매일 밤 9시 특가", f(100, True), YEL, a)
             b = ease((t - to - 0.4) / 0.5)
             if b > 0:
-                layer = Image.new("RGBA", (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(layer); fu = f(54, True)
-                tw = ld.textlength(SITE, font=fu); x0 = (W - tw) / 2 - 50
-                ld.rounded_rectangle([x0, 960, x0 + tw + 100, 1070], 55, fill=PINK + (int(255 * b),))
-                ld.text(((W - tw) / 2, 976), SITE, font=fu, fill=WHITE + (int(255 * b),))
+                layer = Image.new("RGBA", (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(layer); fu = f(58, True)
+                btn = "구독하고 놓치지 않기"
+                tw = ld.textlength(btn, font=fu); x0 = (W - tw) / 2 - 56
+                ld.rounded_rectangle([x0, 950, x0 + tw + 112, 1070], 60, fill=PINK + (int(255 * b),))
+                ld.text(((W - tw) / 2, 966), btn, font=fu, fill=WHITE + (int(255 * b),))
                 img.alpha_composite(layer)
-                text_c(img, 1120, "무료 · 설치 없이 바로 · 원화 가격", f(44), GRAY, b)
-                text_c(img, 1400, "@pixelpantryhq", f(46, True), WHITE, b)
+                text_c(img, 1120, "스팀 한국 스토어 원화 가격 기준", f(44), GRAY, b)
+                text_c(img, 1400, "픽셀팬트리 · " + CHANNEL, f(46, True), WHITE, b)
         return img.convert("RGB")
 
     silent = out_mp4 + ".silent.mp4"

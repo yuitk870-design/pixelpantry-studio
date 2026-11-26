@@ -1,4 +1,4 @@
-"""Daily 'game of the day' YouTube Short for LootDrop (Pixel Pantry).
+"""Daily 'game of the day' YouTube Short for 픽셀팬트리 | 스팀 특가·추천 (Pixel Pantry).
 Runs every day on GitHub Actions. Picks one well-reviewed Steam game on sale from site/game/data.json
 (refreshed daily by build_pages.py), re-checks its live Korean Steam price, renders a ~13s 1080x1920
 video with original chiptune audio and writes docs/daily/<date>.mp4/.jpg/.json + latest.json + caption.txt.
@@ -15,7 +15,7 @@ ROOT = WS.ROOT
 OUT = os.path.join(ROOT, "docs", "daily")
 DATA = os.path.join(ROOT, "site", "game", "data.json")
 PAGES = "https://yuitk870-design.github.io/pixelpantry-studio"
-SITE = "lootdrop-deals.vercel.app"
+CHANNEL = "@pixelpantryhq"
 W, H, FPS = WS.W, WS.H, WS.FPS
 f, text_c, ease, won = WS.f, WS.text_c, WS.ease, WS.won
 WHITE, GRAY, YEL, PINK, BLUE, GREEN = WS.WHITE, WS.GRAY, WS.YEL, WS.PINK, WS.BLUE, WS.GREEN
@@ -83,8 +83,8 @@ def verdict_lines(g):
     if is_low(g):
         return ["지금이 역대 최저가 수준!", "사기 좋은 타이밍이에요"]
     if g.get("low_krw"):
-        return [f"역대 최저가는 약 {won(g['low_krw'])}", "급하지 않다면 목표가 알림 걸어두기"]
-    return [f"{g['off']}% 할인 중", "가격 그래프로 비교해보세요"]
+        return [f"역대 최저가는 약 {won(g['low_krw'])}", "급하지 않다면 조금 더 기다려도 OK"]
+    return [f"{g['off']}% 할인 중", "평가 좋으면 담아둘 만해요"]
 
 
 def make_card(g, art):
@@ -125,11 +125,12 @@ def stamp(text, color):
     return tmp.rotate(-8, resample=Image.BICUBIC, expand=True)
 
 
-def render(g, art, today, out_mp4, out_cover):
+def render(g, art, today, out_mp4, out_cover, no=None):
     bg = WS.build_bg()
     card = make_card(g, art)
     low = is_low(g)
     hook1 = "오늘의 스팀 특가"
+    tag = f"픽셀팬트리 · 오늘의 특가 #{no}" if no else "픽셀팬트리 · 오늘의 특가"
     hook2 = "역대 최저가 🎯" if low else "지금 살까? 기다릴까?"
     hook2 = hook2.replace(" 🎯", "")  # emoji glyphs are not in the font
     st = stamp("역대 최저가!", PINK) if low else stamp(f"-{g['off']}% 할인 중", BLUE)
@@ -151,7 +152,7 @@ def render(g, art, today, out_mp4, out_cover):
             a = ease(t / 0.2) * (1 - (ease((t - t1 + 0.2) / 0.35) if t > t1 - 0.2 else 0))
             text_c(img, 720, hook1, f(110, True), WHITE, a)
             text_c(img, 880, hook2, f(92, True), YEL, ease((t - 0.35) / 0.3) * a)
-            text_c(img, 1060, "LootDrop · by Pixel Pantry", f(44, True), (150, 170, 230), a)
+            text_c(img, 1060, tag, f(44, True), (150, 170, 230), a)
         if t1 <= t < t3 + 0.2:
             text_c(img, 170, hook1, f(66, True), WHITE)
             text_c(img, 260, hook2, f(50, True), YEL)
@@ -175,19 +176,20 @@ def render(g, art, today, out_mp4, out_cover):
                 text_c(img, 1690, vl[1], f(54, True), WHITE, b)
         if t >= t3:
             a = ease((t - t3) / 0.5)
-            text_c(img, 560, "찜해두고 목표가 알림 받기", f(72, True), WHITE, a)
-            text_c(img, 680, "LootDrop에서", f(100, True), YEL, a)
+            text_c(img, 560, "매일 밤 9시", f(72, True), WHITE, a)
+            text_c(img, 680, "오늘의 스팀 특가", f(100, True), YEL, a)
             b = ease((t - t3 - 0.4) / 0.5)
             if b > 0:
-                layer = Image.new("RGBA", (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(layer); fu = f(54, True)
-                tw = ld.textlength(SITE, font=fu); x0 = (W - tw) / 2 - 50
-                ld.rounded_rectangle([x0, 900, x0 + tw + 100, 1010], 55, fill=PINK + (int(255 * b),))
-                ld.text(((W - tw) / 2, 916), SITE, font=fu, fill=WHITE + (int(255 * b),))
+                layer = Image.new("RGBA", (W, H), (0, 0, 0, 0)); ld = ImageDraw.Draw(layer); fu = f(58, True)
+                btn = "구독하고 매일 받아보기"
+                tw = ld.textlength(btn, font=fu); x0 = (W - tw) / 2 - 56
+                ld.rounded_rectangle([x0, 890, x0 + tw + 112, 1010], 60, fill=PINK + (int(255 * b),))
+                ld.text(((W - tw) / 2, 906), btn, font=fu, fill=WHITE + (int(255 * b),))
                 img.alpha_composite(layer)
-                text_c(img, 1060, "무료 · 설치 없이 바로 · 원화 가격", f(44), GRAY, b)
+                text_c(img, 1060, "좋은 세일을 놓치지 않게 하나씩 골라드려요", f(44), GRAY, b)
                 if ev:
                     text_c(img, 1220, ev, f(58, True), PINK, b)
-                text_c(img, 1420, "매일 하나씩 · @pixelpantryhq", f(46, True), WHITE, b)
+                text_c(img, 1420, "픽셀팬트리 · " + CHANNEL, f(46, True), WHITE, b)
         return img.convert("RGB")
 
     silent = out_mp4 + ".silent.mp4"
@@ -214,7 +216,7 @@ def render(g, art, today, out_mp4, out_cover):
     return dur
 
 
-def texts(g, today):
+def texts(g, today, no=None):
     name = g["name"]
     low = is_low(g)
     title = (f"{name} 역대 최저가! 지금 {won(g['price'])} (-{g['off']}%)" if low
@@ -222,7 +224,7 @@ def texts(g, today):
     if len(title) > 90:
         title = title[:88] + "…"
     title += " #Shorts"
-    lines = [f"오늘의 스팀 특가: {name}", "",
+    lines = [f"오늘의 스팀 특가 #{no}: {name}" if no else f"오늘의 스팀 특가: {name}", "",
              f"💰 지금 {won(g['price'])} (정가 {won(g['regular'])}, -{g['off']}%)"]
     if g.get("low_krw"):
         lines.append(f"📉 역대 최저가 약 {won(g['low_krw'])}" + (" → 지금이 최저가 수준!" if low else ""))
@@ -231,10 +233,9 @@ def texts(g, today):
     ev = next_event(today)
     if ev:
         lines.append(f"📅 {ev}")
-    lines += ["", "가격 그래프랑 목표가 알림은 LootDrop에서 무료로 👉",
-              f"https://{SITE}/game/{g['app']}/", "",
+    lines += ["", "매일 밤 9시, 오늘의 스팀 특가를 하나씩 소개해요. 구독해 두면 좋은 세일을 놓치지 않아요 🔔", "",
               "가격은 스팀 한국 스토어 기준이며 바뀔 수 있어요.", "",
-              "#Shorts #스팀할인 #스팀세일 #게임할인 #LootDrop"]
+              "#Shorts #스팀할인 #스팀세일 #게임할인 #스팀특가"]
     return title, "\n".join(lines)
 
 
@@ -251,11 +252,14 @@ def main():
     art = WS.load_art(g["app"])
     ds = today.isoformat()
     mp4 = os.path.join(OUT, f"{ds}.mp4"); cover = os.path.join(OUT, f"{ds}.jpg")
-    dur = render(g, art, today, mp4, cover)
-    title, caption = texts(g, today)
+    prev = [h for h in history if h.get("date") != ds]
+    no = next((h.get("no") for h in history if h.get("date") == ds and h.get("no")), None) or \
+        max([h.get("no", 0) for h in prev] + [len(prev)]) + 1
+    dur = render(g, art, today, mp4, cover, no)
+    title, caption = texts(g, today, no)
     info = {"date": ds, "video": f"{PAGES}/daily/{ds}.mp4", "cover": f"{PAGES}/daily/{ds}.jpg", "duration": round(dur, 1),
             "title": title, "caption": caption, "game": g["name"], "app": g["app"], "price": g["price"], "regular": g["regular"],
-            "off": g["off"], "low_krw": g.get("low_krw"), "is_low": is_low(g)}
+            "off": g["off"], "low_krw": g.get("low_krw"), "is_low": is_low(g), "no": no}
     for path in (os.path.join(OUT, f"{ds}.json"), os.path.join(OUT, "latest.json")):
         with open(path, "w", encoding="utf-8") as fh:
             json.dump(info, fh, ensure_ascii=False, indent=1)
@@ -263,7 +267,7 @@ def main():
         fh.write(title + "\n")
     with open(os.path.join(OUT, "latest_caption.txt"), "w", encoding="utf-8") as fh:
         fh.write(caption + "\n")
-    history = [h for h in history if h.get("date") != ds] + [{"date": ds, "app": g["app"], "name": g["name"]}]
+    history = [h for h in history if h.get("date") != ds] + [{"date": ds, "app": g["app"], "name": g["name"], "no": no}]
     with open(hist_path, "w", encoding="utf-8") as fh:
         json.dump(history[-90:], fh, ensure_ascii=False, indent=1)
     # keep the repo small: only the last 14 daily videos
