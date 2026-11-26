@@ -25,7 +25,7 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: "3.11"
-      - run: pip install pillow numpy scipy requests
+      - run: pip install pillow numpy scipy requests edge-tts
       - name: Render today's short
         run: python scripts/daily_short.py
       - name: Save results to the repo
