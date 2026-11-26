@@ -3,9 +3,10 @@ Runs every day on GitHub Actions. Picks one well-reviewed Steam game on sale fro
 (refreshed daily by build_pages.py), re-checks its live Korean Steam price, renders a ~13s 1080x1920
 video with original chiptune audio and writes docs/daily/<date>.mp4/.jpg/.json + latest.json + caption.txt.
 """
-import json, math, os, subprocess, sys, datetime as dt
+import asyncio, json, math, os, subprocess, sys, tempfile, datetime as dt
+import numpy as np
 import requests
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 sys.path.insert(0, os.path.dirname(__file__))
 import audio as A
@@ -87,6 +88,104 @@ def verdict_lines(g):
     return [f"{g['off']}% 할인 중", "평가 좋으면 담아둘 만해요"]
 
 
+# ---------- trailer clip (first ~1.7s of the short, muted) ----------
+def trailer_frames(app, seconds, fps):
+    """Return a list of 1080x1920 RGB frames from the game's official Steam trailer (no audio), or None."""
+    try:
+        r = requests.get("https://store.steampowered.com/api/appdetails", params={"appids": app, "filters": "movies"},
+                         headers=WS.UA, timeout=30)
+        movies = (r.json()[str(app)].get("data") or {}).get("movies") or []
+        if not movies:
+            return None
+        mv = next((m for m in movies if m.get("highlight")), movies[0])
+        tmp = tempfile.mkdtemp()
+        src = os.path.join(tmp, "seg.mp4")
+        if mv.get("hls_h264"):
+            base = mv["hls_h264"].split("?")[0].rsplit("/", 1)[0] + "/"
+            master = requests.get(mv["hls_h264"], headers=WS.UA, timeout=30).text.splitlines()
+            variants = [l for l in master if l.endswith(".m3u8") and "video" in l]
+            var = next((v for v in variants if "_1_" in v), variants[0] if variants else None)
+            if not var:
+                return None
+            pl = requests.get(base + var, headers=WS.UA, timeout=30).text.splitlines()
+            init = [l.split('"')[1] for l in pl if "EXT-X-MAP" in l]
+            segs = [l for l in pl if l.endswith(".m4s")]
+            if not init or not segs:
+                return None
+            k = min(len(segs) - 1, max(1, int(len(segs) * 0.35)))
+            data = requests.get(base + init[0], headers=WS.UA, timeout=30).content + requests.get(base + segs[k], headers=WS.UA, timeout=60).content
+            open(src, "wb").write(data)
+            ss = "0"
+        elif mv.get("mp4"):
+            u = mv["mp4"].get("max") or mv["mp4"].get("480")
+            open(src, "wb").write(requests.get(u, headers=WS.UA, timeout=120).content)
+            ss = "8"
+        else:
+            return None
+        raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-ss", ss, "-i", src, "-t", str(seconds), "-an",
+                              "-vf", f"fps={fps},scale=1080:-2", "-f", "rawvideo", "-pix_fmt", "rgb24", "-"],
+                             capture_output=True, check=True).stdout
+        h = subprocess.run(["ffprobe", "-v", "error", "-select_streams", "v:0", "-show_entries", "stream=width,height", "-of", "csv=p=0", src],
+                           capture_output=True, text=True).stdout.strip().split(",")
+        fh = int(round(1080 * int(h[1]) / int(h[0]) / 2) * 2)
+        size = 1080 * fh * 3
+        frames = [Image.frombytes("RGB", (1080, fh), raw[i:i + size]) for i in range(0, len(raw) - size + 1, size)]
+        if len(frames) < fps:
+            return None
+        out = []
+        for fr in frames:
+            bgf = fr.resize((int(fr.width * H / fr.height), H), Image.BILINEAR)
+            x0 = (bgf.width - W) // 2
+            bgf = bgf.crop((x0, 0, x0 + W, H)).filter(ImageFilter.GaussianBlur(28))
+            bgf = Image.blend(bgf, Image.new("RGB", (W, H), (10, 10, 15)), 0.55)
+            bgf.paste(fr, (0, (H - fh) // 2 - 40))
+            out.append(bgf)
+        return out
+    except Exception as e:
+        print("trailer failed", app, e)
+        return None
+
+
+# ---------- Korean narration (free Edge TTS, optional) ----------
+VOICE = "ko-KR-SunHiNeural"
+
+
+def narration_text(g):
+    name = g["name"]
+    base = f"오늘의 스팀 특가! {name}, {g['off']}% 할인해서 {int(round(g['price'])):,}원!"
+    if is_low(g):
+        mid = " 역대 최저가예요."
+    elif g.get("low_krw"):
+        mid = f" 역대 최저가는 {int(round(g['low_krw'])):,}원이라, 급하지 않다면 조금 기다려도 괜찮아요."
+    else:
+        mid = " 평가 좋은 게임이라 담아둘 만해요."
+    return base + mid + " 매일 밤 9시, 구독하고 받아보세요!"
+
+
+def make_voice(text, out_wav):
+    """Edge TTS -> trimmed mono wav. Returns duration in seconds or None (then the short has music only)."""
+    try:
+        import edge_tts
+        mp3 = out_wav + ".mp3"
+        asyncio.run(edge_tts.Communicate(text, VOICE, rate="+15%").save(mp3))
+        subprocess.run(["ffmpeg", "-loglevel", "error", "-y", "-i", mp3, "-ac", "1", "-ar", str(A.SR),
+                        "-af", "silenceremove=start_periods=1:start_threshold=-45dB,areverse,silenceremove=start_periods=1:start_threshold=-45dB,areverse",
+                        out_wav], check=True)
+        os.remove(mp3)
+        d = float(subprocess.run(["ffprobe", "-v", "error", "-show_entries", "format=duration", "-of", "csv=p=0", out_wav],
+                                 capture_output=True, text=True).stdout.strip())
+        return d
+    except Exception as e:
+        print("voice failed", e)
+        return None
+
+
+def load_wav(path):
+    raw = subprocess.run(["ffmpeg", "-loglevel", "error", "-i", path, "-f", "f32le", "-ac", "1", "-ar", str(A.SR), "-"],
+                         capture_output=True, check=True).stdout
+    return np.frombuffer(raw, dtype=np.float32).astype(np.float64)
+
+
 def make_card(g, art):
     cw, ch = 960, 1040
     card = Image.new("RGBA", (cw, ch), (0, 0, 0, 0))
@@ -127,6 +226,9 @@ def stamp(text, color):
 
 def render(g, art, today, out_mp4, out_cover, no=None):
     bg = WS.build_bg()
+    voice_wav = out_mp4 + ".voice.wav"
+    vdur = make_voice(narration_text(g), voice_wav)
+    clip = trailer_frames(g["app"], 1.8, FPS)
     card = make_card(g, art)
     low = is_low(g)
     hook1 = "오늘의 스팀 특가"
@@ -137,6 +239,8 @@ def render(g, art, today, out_mp4, out_cover, no=None):
     vl = verdict_lines(g)
     ev = next_event(today)
     T_HOOK, T_CARD, T_VERD, T_OUT = 1.7, 5.6, 2.4, 3.0
+    if vdur:
+        T_OUT = max(T_OUT, vdur + 0.3 + 0.8 - (T_HOOK + T_CARD + T_VERD))
     dur = T_HOOK + T_CARD + T_VERD + T_OUT
     n = int(dur * FPS)
     cover = bg.copy().convert("RGBA"); cover.alpha_composite(card, (60, 520))
@@ -148,7 +252,20 @@ def render(g, art, today, out_mp4, out_cover, no=None):
         t = i / FPS
         img = bg.copy().convert("RGBA")
         t1 = T_HOOK; t2 = t1 + T_CARD; t3 = t2 + T_VERD
-        if t < t1 + 0.2:
+        if t < t1 + 0.2 and clip:
+            fi = min(len(clip) - 1, i)
+            a = 1 - (ease((t - t1 + 0.2) / 0.35) if t > t1 - 0.2 else 0)
+            fr = clip[fi].convert("RGBA")
+            if a < 1:
+                fr = Image.blend(img, fr, max(0.0, a))
+            img = fr
+            text_c(img, 250, hook1, f(100, True), WHITE, ease(t / 0.15) * a)
+            text_c(img, 380, hook2, f(84, True), YEL, ease((t - 0.25) / 0.25) * a)
+            ln = WS.fit_text(g["name"], 84, W - 120)
+            text_c(img, 1420, ln[1], ln[0], WHITE, ease((t - 0.3) / 0.25) * a)
+            text_c(img, 1560, f"-{g['off']}%  {won(g['price'])}", f(96, True), YEL, ease((t - 0.45) / 0.25) * a)
+            text_c(img, 1730, tag, f(40, True), (170, 185, 235), a)
+        elif t < t1 + 0.2:
             a = ease(t / 0.2) * (1 - (ease((t - t1 + 0.2) / 0.35) if t > t1 - 0.2 else 0))
             text_c(img, 720, hook1, f(110, True), WHITE, a)
             text_c(img, 880, hook2, f(92, True), YEL, ease((t - 0.35) / 0.3) * a)
@@ -202,6 +319,10 @@ def render(g, art, today, out_mp4, out_cover, no=None):
     seed = int(today.isoformat().replace("-", ""))
     progs = [["C", "G", "Am", "F"], ["Am", "F", "C", "G"], ["F", "C", "G", "Am"], ["C", "Am", "F", "G"]]
     buf = A.music(dur, progs[seed % 4], bpm=118 + seed % 12, seed=seed % 97)
+    if vdur:
+        buf *= 0.45
+        A.place(buf, load_wav(voice_wav), 0.3, 1.0)
+        os.remove(voice_wav)
     A.place(buf, A.sfx_pop(), 0.0, 0.5); A.place(buf, A.sfx_pop(), 0.35, 0.35)
     A.place(buf, A.sfx_whoosh(0.4), T_HOOK - 0.1, 0.4)
     A.place(buf, A.sfx_coin(), T_HOOK + 0.5, 0.35)
