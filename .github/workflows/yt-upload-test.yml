@@ -1,0 +1,23 @@
+name: YouTube upload test
+on:
+  workflow_dispatch:
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - run: pip install requests
+      - name: Upload latest daily short as PRIVATE test
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          D=$(python -c "import json;print(json.load(open('docs/daily/latest.json'))['date'])")
+          python scripts/yt_upload.py --file "docs/daily/$D.mp4" \
+            --title "[TEST] API 업로드 테스트 $D" \
+            --desc "API 업로드 테스트용 비공개 영상입니다." \
+            --tags "test" --privacy private
