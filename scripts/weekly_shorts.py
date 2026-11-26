@@ -150,7 +150,16 @@ def make_card(deal, art, rank):
 def render(deals, arts, date_str, out_mp4, out_cover):
     bg = build_bg()
     cards = [make_card(d, a, i + 1) for i, (d, a) in enumerate(zip(deals, arts))]
+    import tts
+    v_intro, d_intro = tts.say(f"이번 주 스팀 할인 탑 {len(cards)}!")
+    v_cards = [tts.say(f"{i + 1}위, {tts.short_name(d['name'])}!", rate="+25%") for i, d in enumerate(deals[:len(cards)])]
+    v_out, d_out = tts.say("매주 수요일 탑 파이브! 구독하고 받아보세요!", rate="+20%")
+    voiced = any(v is not None for v, _ in v_cards)
     T_INTRO, T_TITLE, T_CARD, T_OUT = 1.8, 1.6, 2.3, 2.6
+    if voiced:
+        T_TITLE = max(T_TITLE, d_intro + 0.25)
+        T_CARD = max(T_CARD, max(dd for _, dd in v_cards) + 0.3)
+        T_OUT = max(T_OUT, d_out + 0.7)
     t_cards0 = T_INTRO + T_TITLE
     dur = t_cards0 + T_CARD * len(cards) + T_OUT
     n = int(dur * FPS)
@@ -219,6 +228,15 @@ def render(deals, arts, date_str, out_mp4, out_cover):
         tk = t_cards0 + k * T_CARD
         A.place(buf, A.sfx_whoosh(0.35), tk, 0.4); A.place(buf, A.sfx_coin(), tk + 0.45, 0.3)
     A.place(buf, A.sfx_ding(), t_cards0 + T_CARD * len(cards) + 0.4, 0.4)
+    if voiced:
+        buf *= 0.45
+        if v_intro is not None:
+            A.place(buf, v_intro, T_INTRO + 0.05, 1.0)
+        for k, (v, _) in enumerate(v_cards):
+            if v is not None:
+                A.place(buf, v, t_cards0 + k * T_CARD + 0.15, 1.0)
+        if v_out is not None:
+            A.place(buf, v_out, t_cards0 + T_CARD * len(cards) + 0.3, 1.0)
     wav = out_mp4 + ".wav"; A.finish(buf, wav)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", silent, "-i", wav, "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
                     "-af", "lowpass=f=8000,loudnorm=I=-16:TP=-1.5:LRA=11", "-shortest", "-movflags", "+faststart", out_mp4], check=True)

@@ -21,13 +21,13 @@ WHITE, GRAY, YEL, PINK, BLUE, GREEN = WS.WHITE, WS.GRAY, WS.YEL, WS.PINK, WS.BLU
 KST = dt.timezone(dt.timedelta(hours=9))
 
 THEMES = [
-    {"key": "hidden", "title": "숨은 명작", "sub": "평가는 압도적인데 의외로 덜 알려진 게임",
+    {"key": "hidden", "title": "숨은 명작", "say": "평가는 압도적인데 의외로 덜 알려진 게임이에요.", "sub": "평가는 압도적인데 의외로 덜 알려진 게임",
      "ok": lambda g: (g.get("rating") or 0) >= 92 and 1000 <= g.get("reviews", 0) <= 25000 and g["price"] <= 20000},
-    {"key": "indie", "title": "인디 명작", "sub": "작지만 평가 좋은 인디 게임",
+    {"key": "indie", "title": "인디 명작", "say": "작지만 평가 좋은 인디 게임이에요.", "sub": "작지만 평가 좋은 인디 게임",
      "ok": lambda g: "인디" in g.get("genres", []) and (g.get("rating") or 0) >= 90},
-    {"key": "rpg", "title": "빠져드는 RPG·어드벤처", "sub": "스토리와 모험이 좋은 게임",
+    {"key": "rpg", "title": "빠져드는 RPG·어드벤처", "say": "스토리와 모험이 좋은 게임이에요.", "sub": "스토리와 모험이 좋은 게임",
      "ok": lambda g: any(x in g.get("genres", []) for x in ("RPG", "어드벤처")) and (g.get("rating") or 0) >= 88},
-    {"key": "low", "title": "역대 최저가 대작", "sub": "유명한 게임이 지금 가장 싸요",
+    {"key": "low", "title": "역대 최저가 대작", "say": "유명한 게임이 지금 가장 싸요.", "sub": "유명한 게임이 지금 가장 싸요",
      "ok": lambda g: DS.is_low(g) and g.get("reviews", 0) >= 20000},
 ]
 
@@ -97,7 +97,17 @@ def make_card(g, art, rank):
 def render(games, arts, theme, today, out_mp4, out_cover):
     bg = WS.build_bg()
     cards = [make_card(g, a, i + 1) for i, (g, a) in enumerate(zip(games, arts))]
+    import tts
+    v_intro, d_intro = tts.say(f"이번 주 추천 게임, {theme['title'].replace('·', ', ')}! {theme.get('say', '')}")
+    v_cards = [tts.say(f"{i + 1}번, {tts.short_name(g['name'])}! 지금 {g['off']}% 할인!", rate="+22%")
+               for i, g in enumerate(games)]
+    v_out, d_out = tts.say("매주 토요일 추천 게임, 구독하고 받아보세요!", rate="+20%")
+    voiced = any(v is not None for v, _ in v_cards)
     T_INTRO, T_CARD, T_OUT = 2.4, 3.0, 2.8
+    if voiced:
+        T_INTRO = max(T_INTRO, d_intro + 0.5)
+        T_CARD = max(T_CARD, max(dd for _, dd in v_cards) + 0.35)
+        T_OUT = max(T_OUT, d_out + 0.7)
     dur = T_INTRO + T_CARD * len(cards) + T_OUT
     n = int(dur * FPS)
     cover = bg.copy().convert("RGBA"); cover.alpha_composite(cards[0], (60, 500))
@@ -161,6 +171,15 @@ def render(games, arts, theme, today, out_mp4, out_cover):
         tk = T_INTRO + k * T_CARD
         A.place(buf, A.sfx_whoosh(0.35), tk, 0.4); A.place(buf, A.sfx_coin(), tk + 0.45, 0.3)
     A.place(buf, A.sfx_ding(), T_INTRO + T_CARD * len(cards) + 0.4, 0.4)
+    if voiced:
+        buf *= 0.45
+        if v_intro is not None:
+            A.place(buf, v_intro, 0.3, 1.0)
+        for k, (v, _) in enumerate(v_cards):
+            if v is not None:
+                A.place(buf, v, T_INTRO + k * T_CARD + 0.2, 1.0)
+        if v_out is not None:
+            A.place(buf, v_out, T_INTRO + T_CARD * len(cards) + 0.3, 1.0)
     wav = out_mp4 + ".wav"; A.finish(buf, wav)
     subprocess.run(["ffmpeg", "-y", "-loglevel", "error", "-i", silent, "-i", wav, "-c:v", "copy", "-c:a", "aac", "-b:a", "192k",
                     "-af", "lowpass=f=8000,loudnorm=I=-16:TP=-1.5:LRA=11", "-shortest", "-movflags", "+faststart", out_mp4], check=True)
@@ -197,7 +216,7 @@ def main():
     if len(picked) < 3:
         print("not enough games", len(picked)); sys.exit(1)
     if relaxed:
-        theme = {"key": "best", "title": "평가 좋은 할인 게임", "sub": "스팀 평가가 좋은 게임만 모았어요"}
+        theme = {"key": "best", "title": "평가 좋은 할인 게임", "sub": "스팀 평가가 좋은 게임만 모았어요", "say": "스팀 평가가 좋은 게임만 모았어요."}
     arts = [WS.load_art(g["app"]) for g in picked]
     ds = today.isoformat()
     mp4 = os.path.join(OUT, f"{ds}.mp4"); cover = os.path.join(OUT, f"{ds}.jpg")
