@@ -10,7 +10,8 @@ jobs:
         with:
           python-version: "3.11"
       - run: pip install requests
-      - name: Upload latest daily short as PRIVATE test
+      - name: Upload latest daily short as UNLISTED test
+        id: up
         env:
           YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
           YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
@@ -19,5 +20,26 @@ jobs:
           D=$(python -c "import json;print(json.load(open('docs/daily/latest.json'))['date'])")
           python scripts/yt_upload.py --file "docs/daily/$D.mp4" \
             --title "[TEST] API 업로드 테스트 $D" \
-            --desc "API 업로드 테스트용 비공개 영상입니다." \
-            --tags "test" --privacy private
+            --desc "API 업로드 테스트용 일부 공개 영상입니다." \
+            --tags "test" --privacy unlisted
+      - name: Check privacy after processing
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+          VID: ${{ steps.up.outputs.video_id }}
+        run: |
+          sleep 90
+          python - <<'PY'
+          import os, requests, sys
+          sys.path.insert(0, "scripts")
+          from yt_upload import access_token
+          t = access_token()
+          r = requests.get("https://www.googleapis.com/youtube/v3/videos",
+                           params={"part": "status", "id": os.environ["VID"]},
+                           headers={"Authorization": f"Bearer {t}"}, timeout=30)
+          print(r.text)
+          st = r.json()["items"][0]["status"]
+          print("RESULT privacy =", st.get("privacyStatus"), "| upload =", st.get("uploadStatus"),
+                "| reject =", st.get("rejectionReason"), "| failure =", st.get("failureReason"))
+          PY
