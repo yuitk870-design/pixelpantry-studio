@@ -244,6 +244,24 @@ def render(deals, arts, date_str, out_mp4, out_cover):
     return dur
 
 
+def texts(deals):
+    """YouTube title + description (no outside links)."""
+    from tts import short_name
+    n = len(deals)
+    nm = lambda d: d["name"].replace("™", "").replace("®", "") if len(d["name"]) <= 24 else short_name(d["name"])
+    top = ", ".join(f"{nm(d)} {d['off']}%" for d in deals[:2])
+    title = f"이번 주 스팀 할인 TOP {n} — {top} #Shorts"
+    if len(title) > 100:
+        title = f"이번 주 스팀 할인 TOP {n} — {nm(deals[0])} {deals[0]['off']}% #Shorts"
+    lines = [f"이번 주 스팀 할인 TOP {n} 🎮", ""]
+    for i, d in enumerate(deals, 1):
+        lines.append(f"{i}. {d['name']} — ₩{int(round(d['sale'])):,} (-{d['off']}%)")
+    lines += ["", "매주 수요일 TOP 5, 매일 밤 9시 오늘의 스팀 특가를 소개해요. 구독해 두면 좋은 세일을 놓치지 않아요 🔔", "",
+              "가격은 스팀 한국 스토어 기준이며 바뀔 수 있어요.", "",
+              "#Shorts #스팀할인 #스팀세일 #게임할인 #스팀특가"]
+    return title, "\n".join(lines)
+
+
 def main():
     os.makedirs(OUT, exist_ok=True)
     today = dt.datetime.now(dt.timezone(dt.timedelta(hours=9))).date().isoformat()  # Korea date
@@ -259,7 +277,11 @@ def main():
     info = {"date": today, "video": f"weekly/{today}.mp4", "cover": f"weekly/{today}.jpg", "duration": round(dur, 1), "deals": deals}
     with open(os.path.join(OUT, f"{today}.json"), "w", encoding="utf-8") as fh: json.dump(info, fh, ensure_ascii=False, indent=1)
     with open(os.path.join(OUT, "latest.json"), "w", encoding="utf-8") as fh: json.dump(info, fh, ensure_ascii=False, indent=1)
+    title, caption = texts(deals)
+    with open(os.path.join(OUT, "latest_title.txt"), "w", encoding="utf-8") as fh: fh.write(title + "\n")
+    with open(os.path.join(OUT, "latest_caption.txt"), "w", encoding="utf-8") as fh: fh.write(caption + "\n")
     print(json.dumps(info, ensure_ascii=False))
+    print(title); print(caption)
 
 
 if __name__ == "__main__":
