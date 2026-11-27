@@ -41,3 +41,14 @@ jobs:
           path: docs
       - id: deployment
         uses: actions/deploy-pages@v4
+      - name: Upload to YouTube (scheduled 18:00 KST)
+        env:
+          YT_CLIENT_ID: ${{ secrets.YT_CLIENT_ID }}
+          YT_CLIENT_SECRET: ${{ secrets.YT_CLIENT_SECRET }}
+          YT_REFRESH_TOKEN: ${{ secrets.YT_REFRESH_TOKEN }}
+        run: |
+          D=$(python -c "import json;print(json.load(open('docs/weekly/latest.json'))['date'])")
+          python scripts/yt_upload.py --file "docs/weekly/$D.mp4" \
+            --title-file docs/weekly/latest_title.txt --desc-file docs/weekly/latest_caption.txt \
+            --tags "스팀할인,스팀세일,게임할인,스팀특가,스팀할인TOP5,픽셀팬트리" \
+            --publish-at "${D}T18:00:00+09:00"
