@@ -1,0 +1,39 @@
+{
+ "date": "2026-11-28",
+ "video": "recommend/2026-11-28.mp4",
+ "video_url": "https://yuitk870-design.github.io/pixelpantry-studio/recommend/2026-11-28.mp4",
+ "cover": "recommend/2026-11-28.jpg",
+ "duration": 23.4,
+ "theme": "숨은 명작",
+ "title": "이번 주 추천 게임: 숨은 명작 — Cruelty Squad, Broforce #Shorts",
+ "caption": "이번 주 추천 게임 · 숨은 명작 🎮\n평가는 압도적인데 의외로 덜 알려진 게임\n\n1. Cruelty Squad — ₩2,050 (-90%) · 스팀 평가 96% · 리뷰 20,278개\n2. Broforce — ₩3,300 (-80%) · 스팀 평가 96% · 리뷰 20,589개 · 한국어 지원\n3. Against the Storm 어게인스트 더 스톰 — ₩5,980 (-80%) · 스팀 평가 95% · 리뷰 19,413개 · 한국어 지원\n\n스팀 평가와 리뷰 수, 할인 정보를 바탕으로 고른 목록이에요.\n매주 토요일 추천 게임, 매일 밤 9시 오늘의 스팀 특가를 올려요. 구독해 두면 좋은 세일을 놓치지 않아요 🔔\n\n가격은 스팀 한국 스토어 기준이며 바뀔 수 있어요.\n\n#Shorts #스팀게임추천 #스팀할인 #스팀세일 #게임추천 #스팀특가",
+ "games": [
+  {
+   "app": 1388770,
+   "name": "Cruelty Squad",
+   "price": 2050.0,
+   "regular": 20500.0,
+   "off": 90,
+   "rating": 96,
+   "reviews": 20278
+  },
+  {
+   "app": 274190,
+   "name": "Broforce",
+   "price": 3300.0,
+   "regular": 16500.0,
+   "off": 80,
+   "rating": 96,
+   "reviews": 20589
+  },
+  {
+   "app": 1336490,
+   "name": "Against the Storm 어게인스트 더 스톰",
+   "price": 5980.0,
+   "regular": 29900.0,
+   "off": 80,
+   "rating": 95,
+   "reviews": 19413
+  }
+ ]
+}
